@@ -48,19 +48,19 @@ view model =
 
         Erfolg l ->
             let
-                filteredCountrys =
-                    filterAndReduceCountrys l.data -- Fehler ab hier, l.data
+                filteredTitles =
+                    filterAndReduceTitles l.data 
 
-                numberCountrys =
+                numberTitles =
                     List.length l.data
 
             in
                 Html.div []
                     [ Html.p []
-                    [ Html.text "Number of countries: "
-                    , Html.text <| String.fromInt numberCountrys
+                    [ Html.text "Number of titles: "
+                    , Html.text <| String.fromInt numberTitles
                     ]
-                        , scatterplot filteredCountrys
+                        , scatterplot filteredTitles
                     ]
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -69,7 +69,7 @@ update msg model =
         ErhalteText result ->
             case result of
                 Ok fullText ->
-                    ( Erfolg <| { data = countryListe [ fullText ]}, Cmd.none )
+                    ( Erfolg <| { data = titleListe [ fullText ]}, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -78,31 +78,31 @@ type Model
   = Fehlschlag
   | Laden
   | Erfolg 
-    { data : List Country
+    { data : List Title
     }
 
 type Msg
     = ErhalteText (Result Http.Error String)
 
-filterAndReduceCountrys : List Country -> XyData
-filterAndReduceCountrys my_countries =
-    XyData "Number of Conflict" "Fatalities" (List.filterMap country2point my_countries)
+filterAndReduceTitles : List Title -> XyData
+filterAndReduceTitles my_titles =
+    XyData "IMDb votes" "IMDb Score" (List.filterMap title2point my_titles)
 
-pointLabel : String -> Int -> Int -> Point
-pointLabel country fatalities numberconflict =
-    Point (country ++ " (" ++ String.fromInt numberconflict ++ ", " ++ String.fromInt fatalities ++ ")") (toFloat numberconflict) (toFloat fatalities)
+pointLabel : String -> Float -> Int -> Point
+pointLabel title imdb_score imdb_votes =
+    Point (title ++ " (" ++ String.fromInt imdb_votes ++ ", " ++ String.fromFloat imdb_score ++ ")") (toFloat imdb_votes) (imdb_score)
 
-country2point : Country -> Maybe Point
-country2point country =
-    Maybe.map3 pointLabel (Just country.country) (Just country.numberConflict) (Just country.fatalities)
+title2point : Title -> Maybe Point
+title2point title =
+    Maybe.map3 pointLabel (Just title.title) (Just title.imdb_score) (Just title.imdb_votes) 
 
 holenVonCsv : (Result Http.Error String -> Msg) -> Cmd Msg
 holenVonCsv x = 
     liste
         |> List.map
-            (\datasatz ->
+            (\dataset ->
                 Http.get
-                    { url = "https://raw.githubusercontent.com/do46/IR-African_Conflicts-VAD/Viet-Anh-Do/Daten/" ++ datasatz
+                    { url = "https://raw.githubusercontent.com/do46/IR_Netflix_TVShows_Movies_VAD/main/Data/AufbereiteteDaten/" ++ dataset                    
                     , expect = Http.expectString ErhalteText
                     }
             )
@@ -110,26 +110,29 @@ holenVonCsv x =
 
 liste : List String
 liste =
-    [ "FaCoRe.csv"]
+    [ "titleslessdf.csv"]
 
-csvStringZuDaten : String -> List Country
+csvStringZuDaten : String -> List Title
 csvStringZuDaten csvRoh =
     Csv.parse csvRoh
-        |> Csv.Decode.decodeCsv dekodierenCountry
+        |> Csv.Decode.decodeCsv dekodierenTitle
         |> Result.toMaybe
         |> Maybe.withDefault []
 
-dekodierenCountry : Csv.Decode.Decoder (Country -> a) a
-dekodierenCountry =
-    Csv.Decode.map Country
-        (Csv.Decode.field "COUNTRY" Ok
-            |> Csv.Decode.andMap (Csv.Decode.field "REGION" Ok)
-            |> Csv.Decode.andMap (Csv.Decode.field "NUMBERCONFLICT"(String.toInt >> Result.fromMaybe "error parsing string"))
-            |> Csv.Decode.andMap (Csv.Decode.field "FATALITIES"(String.toInt >> Result.fromMaybe "error parsing string"))
+dekodierenTitle : Csv.Decode.Decoder (Title -> a) a
+dekodierenTitle =
+    Csv.Decode.map Title
+        (Csv.Decode.field "id" Ok
+            |> Csv.Decode.andMap (Csv.Decode.field "title" Ok)
+            |> Csv.Decode.andMap (Csv.Decode.field "type" Ok)
+            |> Csv.Decode.andMap (Csv.Decode.field "release_year"(String.toInt >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "runtime"(String.toInt >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "imdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "imdb_votes"(String.toInt >> Result.fromMaybe "error parsing string"))
         )
 
-countryListe :List String -> List Country
-countryListe liste1 =
+titleListe :List String -> List Title
+titleListe liste1 =
     List.map(\t -> csvStringZuDaten t) liste1
         |> List.concat
 
@@ -143,11 +146,14 @@ type alias XyData =
     }
 
 
-type alias Country =
-    { country : String
-    , region : String
-    , fatalities : Int
-    , numberConflict : Int
+type alias Title =
+    { id : String
+    , title : String
+    , typ : String
+    , release_year : Int
+    , runtime : Int
+    , imdb_score : Float
+    , imdb_votes : Int
     }
 
 type EventType
