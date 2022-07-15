@@ -157,20 +157,7 @@ type alias Title =
     , imdb_votes : Int
     }
 
-type EventType
-    = Battles
-    | Violence_against_civilians
-    | Protests
-    | Riots
-    | Strategic_developments
-    | Explosions_Remote_violence
 
-type Region
-    = Middle_Africa
-    | Eastern_Africa
-    | Northern_Africa
-    | Western_Africa
-    | Southern_Africa
 
 scatterplot : XyData -> Svg msg
 scatterplot model =
