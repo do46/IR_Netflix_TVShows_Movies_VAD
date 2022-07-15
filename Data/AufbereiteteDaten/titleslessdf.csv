@@ -1,4 +1,4 @@
-;id;title;type;release_year;runtime;genres;production_countries;seasons;imdb_score;imdb_votes;tmdb_popularity;tmdb_score
+i;id;title;type;release_year;runtime;genres;production_countries;seasons;imdb_score;imdb_votes;tmdb_popularity;tmdb_score
 0;ts300399;Five Came Back: The Reference Films;SHOW;1945;48;['documentation'];['US'];1.0;nan;nan;0.6;
 1;tm84618;Taxi Driver;MOVIE;1976;113;['crime', 'drama'];['US'];;8.3;795222.0;27.612;8.2
 2;tm127384;Monty Python and the Holy Grail;MOVIE;1975;91;['comedy', 'fantasy'];['GB'];;8.2;530877.0;18.216;7.8
