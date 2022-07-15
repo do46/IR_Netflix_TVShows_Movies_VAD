@@ -62,6 +62,7 @@ view model =
                     ]
                         , scatterplot filteredTitles
                     ]
+                
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -125,7 +126,7 @@ dekodierenTitle =
         (Csv.Decode.field "id" Ok
             |> Csv.Decode.andMap (Csv.Decode.field "title" Ok)
             |> Csv.Decode.andMap (Csv.Decode.field "type" Ok)
-            |> Csv.Decode.andMap (Csv.Decode.field "release_year"(String.toInt >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "release_year" (String.toInt >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "runtime"(String.toInt >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "imdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "imdb_votes"(String.toInt >> Result.fromMaybe "error parsing string"))
