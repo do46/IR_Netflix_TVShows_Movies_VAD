@@ -111,7 +111,7 @@ holenVonCsv x =
 
 liste : List String
 liste =
-    [ "titleslessdf1.csv"]
+    [ "titleslesslessdf.csv"]
 
 csvStringZuDaten : String -> List Title
 csvStringZuDaten csvRoh =
