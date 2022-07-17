@@ -1,4 +1,4 @@
-,id,title,type,release_year,runtime,imdb_score,imdb_votes
+i,id,title,type,release_year,runtime,imdb_score,imdb_votes
 1,tm84618,Taxi Driver,MOVIE,1976,113,8.3,795222.0
 2,tm127384,Monty Python and the Holy Grail,MOVIE,1975,91,8.2,530877.0
 3,tm70993,Life of Brian,MOVIE,1979,94,8.0,392419.0
