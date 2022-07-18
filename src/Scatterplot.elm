@@ -17,6 +17,8 @@ import Html exposing (ul)
 import Html exposing (li)
 import Html.Events exposing (onClick)
 import TypedSvg.Core exposing (Svg, text)
+import Html exposing (a)
+import TypedSvg.Filters.Attributes exposing (z)
 
 main : Program () Model Msg
 main =
@@ -87,15 +89,25 @@ type Msg
 
 filterAndReduceTitles : List Title -> XyData
 filterAndReduceTitles my_titles =
-    XyData "IMDb votes" "IMDb Score" (List.filterMap title2point my_titles)
+    XyData "IMDb votes" "IMDb Score" "Runtime" "TMDb Popularity" "TMDb Score" (List.filterMap title2point my_titles)
 
-pointLabel : String -> Float -> Float -> Point
-pointLabel title imdb_score imdb_votes =
-    Point (title ++ " (" ++ String.fromFloat imdb_votes ++ ", " ++ String.fromFloat imdb_score ++ ")") (imdb_votes) (imdb_score)
+pointLabel : String -> Float -> Float -> Float -> Float -> Float -> Point
+pointLabel title imdb_score imdb_votes runtime tmdb_popularity tmdb_score=
+    Point (title ++ " (" ++ String.fromFloat imdb_votes ++ ", " ++ String.fromFloat imdb_score ++ ")") (imdb_votes) (imdb_score) (runtime) (tmdb_popularity) (tmdb_score)
+
+andMap : Maybe a -> Maybe (a -> b) -> Maybe b
+andMap = Maybe.map2 (|>)
 
 title2point : Title -> Maybe Point
 title2point title =
-    Maybe.map3 pointLabel (Just title.title) (Just title.imdb_score) (Just title.imdb_votes) 
+    Maybe.map pointLabel 
+        (Just title.title) 
+            |> andMap (Just title.imdb_score) 
+            |> andMap (Just title.imdb_votes)
+            |> andMap (Just title.runtime)
+            |> andMap (Just title.tmdb_popularity)
+            |> andMap (Just title.tmdb_score)
+        
 
 holenVonCsv : (Result Http.Error String -> Msg) -> Cmd Msg
 holenVonCsv x = 
@@ -103,7 +115,7 @@ holenVonCsv x =
         |> List.map
             (\dataset ->
                 Http.get
-                    { url = "https://raw.githubusercontent.com/do46/IR_Netflix_TVShows_Movies_VAD/main/Data/AufbereiteteDaten/" ++ dataset                    
+                    { url = "https://raw.githubusercontent.com/do46/IR_Netflix_TVShows_Movies_VAD/main/Data/AufbereiteteDaten/" ++ dataset ++ ".csv"                   
                     , expect = Http.expectString ErhalteText
                     }
             )
@@ -111,7 +123,11 @@ holenVonCsv x =
 
 liste : List String
 liste =
-    [ "titleslesslessdf.csv"]
+    [ 
+    --"titleslesslessdf"
+    "moviedf"
+    --"showdf"
+    ]
 
 csvStringZuDaten : String -> List Title
 csvStringZuDaten csvRoh =
@@ -130,28 +146,31 @@ dekodierenTitle =
             |> Csv.Decode.andMap (Csv.Decode.field "runtime"(String.toFloat >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "imdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "imdb_votes"(String.toFloat >> Result.fromMaybe "error parsing string"))
-            --|> Csv.Decode.andMap (Csv.Decode.field "tmdb_popularity"(String.toFloat >> Result.fromMaybe "error parsing string"))
-            --|> Csv.Decode.andMap (Csv.Decode.field "tmdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "tmdb_popularity"(String.toFloat >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "tmdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
         )
+
+filterRecord : (a -> b) -> b -> List a -> List a
+filterRecord fn val list =
+  List.filter
+    (fn >> (==) val)
+    list
 
 titleListe :List String -> List Title
 titleListe liste1 =
     List.map(\t -> csvStringZuDaten t) liste1
         |> List.concat
 
---filter: List Title -> List Title
---filter listTitle = 
---    let
---        p title = title.cityMPG /= Nothing && car.retailPrice /= Nothing && car.dealerCost /= Nothing && car.carLen /= Nothing
---    in 
---        List.filter p listTitle
 
 type alias Point =
-    { pointName : String, x : Float, y : Float }
+    { pointName : String, x : Float, y : Float, z : Float, a : Float, b : Float }
 
 type alias XyData =
     { xDescription : String
     , yDescription : String
+    , zDescription : String
+    , aDescription : String
+    , bDescription : String
     , data : List Point
     }
 
@@ -164,11 +183,15 @@ type alias Title =
     , runtime : Float
     , imdb_score : Float
     , imdb_votes : Float
-    --, tmdb_popularity : Float
-    --, tmdb_score : Float
+    , tmdb_popularity : Float
+    , tmdb_score : Float
     }
 
-
+type PlotType
+    = IMVS
+    | TMPS
+    | IMRS
+    | TMRS
 
 scatterplot : XyData -> Svg msg
 scatterplot model =
@@ -176,11 +199,11 @@ scatterplot model =
         
         xValues : List Float
         xValues =
-            List.map .x model.data
+            List.map .z model.data -- x
 
         yValues : List Float
         yValues =
-            List.map .y model.data
+            List.map .y model.data -- y
 
         xScaleLocal : ContinuousScale Float
         xScaleLocal =
@@ -223,11 +246,11 @@ scatterplot model =
 
                 --, fontWeight FontWeightBold
                 ]
-                [ text model.xDescription ]
+                [ text model.zDescription ] -- name x
                 ]
     -- plot y axis             
-         ,g[transform [Translate(60) (60)]]
-         [
+         ,g[ transform [Translate(60) (60)]]
+           [
              yAxis yValues
              , text_
                 [ x -30
@@ -238,7 +261,7 @@ scatterplot model =
 
                 --, fontWeight FontWeightBold
                 ]
-                [ text model.yDescription ]
+                [ text model.yDescription ] -- name y
              ]
     -- plot points and description     
          ,g [ transform [ Translate padding padding ] ]
@@ -254,11 +277,8 @@ point scaleX scaleY xyPoint =
         , fontFamily [ "sans-serif" ]
         , transform
             [ Translate
-                (Scale.convert scaleX xyPoint.x) -- x
+                (Scale.convert scaleX xyPoint.z) -- x
                 (Scale.convert scaleY xyPoint.y) -- y
--- Given a value from the domain, returns the corresponding value from 
--- the range. If the given value is outside the domain the mapping may 
--- be extrapolated such that the returned value is outside the range.
             ]
             -- Verschieben entlang der x/y-Achse
         ]
@@ -327,9 +347,8 @@ wideExtent values =
 xAxis : List Float -> Svg msg
 xAxis values =
     Axis.bottom [ Axis.tickCount tickCount ] (xScale values)
---draw ticks under axis
+
 
 yAxis : List Float -> Svg msg
 yAxis values =
     Axis.left [ Axis.tickCount tickCount ] (yScale values)
---draw ticks in the left of the axis
