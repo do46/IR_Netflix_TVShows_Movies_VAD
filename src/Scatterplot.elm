@@ -89,9 +89,9 @@ filterAndReduceTitles : List Title -> XyData
 filterAndReduceTitles my_titles =
     XyData "IMDb votes" "IMDb Score" (List.filterMap title2point my_titles)
 
-pointLabel : String -> Float -> Int -> Point
+pointLabel : String -> Float -> Float -> Point
 pointLabel title imdb_score imdb_votes =
-    Point (title ++ " (" ++ String.fromInt imdb_votes ++ ", " ++ String.fromFloat imdb_score ++ ")") (toFloat imdb_votes) (imdb_score)
+    Point (title ++ " (" ++ String.fromFloat imdb_votes ++ ", " ++ String.fromFloat imdb_score ++ ")") (imdb_votes) (imdb_score)
 
 title2point : Title -> Maybe Point
 title2point title =
@@ -126,16 +126,25 @@ dekodierenTitle =
         (Csv.Decode.field "id" Ok
             |> Csv.Decode.andMap (Csv.Decode.field "title" Ok)
             |> Csv.Decode.andMap (Csv.Decode.field "type" Ok)
-            |> Csv.Decode.andMap (Csv.Decode.field "release_year" (String.toInt >> Result.fromMaybe "error parsing string"))
-            |> Csv.Decode.andMap (Csv.Decode.field "runtime"(String.toInt >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "release_year" (String.toFloat >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "runtime"(String.toFloat >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "imdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
-            |> Csv.Decode.andMap (Csv.Decode.field "imdb_votes"(String.toInt >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "imdb_votes"(String.toFloat >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "tmdb_popularity"(String.toFloat >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "tmdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
         )
 
 titleListe :List String -> List Title
 titleListe liste1 =
     List.map(\t -> csvStringZuDaten t) liste1
         |> List.concat
+
+--filter: List Title -> List Title
+--filter listTitle = 
+--    let
+--        p title = title.cityMPG /= Nothing && car.retailPrice /= Nothing && car.dealerCost /= Nothing && car.carLen /= Nothing
+--    in 
+--        List.filter p listTitle
 
 type alias Point =
     { pointName : String, x : Float, y : Float }
@@ -151,10 +160,12 @@ type alias Title =
     { id : String
     , title : String
     , typ : String
-    , release_year : Int
-    , runtime : Int
+    , release_year : Float
+    , runtime : Float
     , imdb_score : Float
-    , imdb_votes : Int
+    , imdb_votes : Float
+    , tmdb_popularity : Float
+    , tmdb_score : Float
     }
 
 
@@ -181,12 +192,12 @@ scatterplot model =
 
         half : ( Float, Float ) -> Float
         half t =
-            (Tuple.second t - Tuple.first t) / 2
+            (Tuple.second t - Tuple.first t) *8/9
 
         labelPositions : { x : Float, y : Float }
         labelPositions =
-            { x = wideExtent xValues |> half
-            , y = wideExtent yValues |> Tuple.second
+            { x = (wideExtent xValues |> half)
+            , y = (wideExtent yValues |> Tuple.second)
             }
    
     in
@@ -293,32 +304,25 @@ yScale : List Float -> ContinuousScale Float
 yScale values =
     Scale.linear ( h - 2 * padding, 0 ) ( wideExtent values )
  
-addieren : (Float, Float) -> Float-> (Float, Float) 
-addieren (min, max) shift =
-    if min >= 0 then
-        ( 0, max + shift)
-    else 
-        (min - shift, max + shift)
--- shift the scale
-
 wideExtent : List Float -> ( Float, Float )
-wideExtent values = 
+wideExtent values =
     let
-        result = 
-            Maybe.withDefault (0, 0)
-            (Statistics.extent values)
-        -- Statistics.extent: Returns the minimum and maximum value in the list
-        max =          
-            Maybe.withDefault (0)
-            (List.maximum values)
-            
-        result1 = 
-            
-            addieren result (max*0.1)
-        
-          
-    in
-     result1
+        scale: (Float, Float)
+        scale = Maybe.withDefault defaultExtent (Statistics.extent values)
+
+        range: Float
+        range = -(Tuple.first scale) + (Tuple.second scale)
+
+        down: Float
+        down = (Tuple.first scale) - range/(toFloat (2*tickCount))
+
+        up: Float
+        up = (Tuple.second scale) + range/(toFloat (2*tickCount))
+    in         
+        if (down < 0) then 
+            (0, up)
+        else
+            (down, up)
     
 xAxis : List Float -> Svg msg
 xAxis values =
