@@ -115,7 +115,7 @@ holenVonCsv x =
         |> List.map
             (\dataset ->
                 Http.get
-                    { url = "https://raw.githubusercontent.com/do46/IR_Netflix_TVShows_Movies_VAD/main/Data/AufbereiteteDaten/" ++ dataset ++ ".csv"                   
+                    { url = "https://raw.githubusercontent.com/do46/IR_Netflix_TVShows_Movies_VAD/main/Data/AufbereiteteDaten/" ++ dataset                   
                     , expect = Http.expectString ErhalteText
                     }
             )
@@ -124,9 +124,9 @@ holenVonCsv x =
 liste : List String
 liste =
     [ 
-    --"titleslesslessdf"
-    "moviedf"
-    --"showdf"
+    "titleslesslessdf.csv"
+    --"moviedf.csv"
+    --"showdf.csv"
     ]
 
 csvStringZuDaten : String -> List Title
