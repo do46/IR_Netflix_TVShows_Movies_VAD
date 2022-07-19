@@ -89,11 +89,11 @@ type Msg
 
 filterAndReduceTitles : List Title -> XyData
 filterAndReduceTitles my_titles =
-    XyData "IMDb votes" "IMDb Score" "Runtime" "TMDb Popularity" "TMDb Score" (List.filterMap title2point my_titles)
+    XyData "IMDb votes" "IMDb Score" "Runtime" "TMDb Popularity" "TMDb Score" "Number of Seasons" (List.filterMap title2point my_titles)
 
-pointLabel : String -> Float -> Float -> Float -> Float -> Float -> Point
-pointLabel title imdb_score imdb_votes runtime tmdb_popularity tmdb_score=
-    Point (title ++ " (" ++ String.fromFloat imdb_votes ++ ", " ++ String.fromFloat imdb_score ++ ")") (imdb_votes) (imdb_score) (runtime) (tmdb_popularity) (tmdb_score)
+pointLabel : String -> Float -> Float -> Float -> Float -> Float -> Float -> Point
+pointLabel title imdb_score imdb_votes runtime tmdb_popularity tmdb_score seasons=
+    Point (title ++ " (" ++ String.fromFloat imdb_votes ++ ", " ++ String.fromFloat imdb_score ++ ")") (imdb_votes) (imdb_score) (runtime) (tmdb_popularity) (tmdb_score) (seasons)
 
 andMap : Maybe a -> Maybe (a -> b) -> Maybe b
 andMap = Maybe.map2 (|>)
@@ -107,6 +107,8 @@ title2point title =
             |> andMap (Just title.runtime)
             |> andMap (Just title.tmdb_popularity)
             |> andMap (Just title.tmdb_score)
+            |> andMap (Just title.seasons)
+
         
 
 holenVonCsv : (Result Http.Error String -> Msg) -> Cmd Msg
@@ -125,8 +127,8 @@ liste : List String
 liste =
     [ 
     --"titleslesslessdf.csv"
-    "moviedf.csv"
-    --"showdf.csv"
+    --"moviedf.csv"
+    "showdf.csv"
     ]
 
 csvStringZuDaten : String -> List Title
@@ -148,6 +150,7 @@ dekodierenTitle =
             |> Csv.Decode.andMap (Csv.Decode.field "imdb_votes"(String.toFloat >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "tmdb_popularity"(String.toFloat >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "tmdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "seasons"(String.toFloat >> Result.fromMaybe "error parsing string"))
         )
 
 filterRecord : (a -> b) -> b -> List a -> List a
@@ -163,7 +166,7 @@ titleListe liste1 =
 
 
 type alias Point =
-    { pointName : String, x : Float, y : Float, z : Float, a : Float, b : Float }
+    { pointName : String, x : Float, y : Float, z : Float, a : Float, b : Float , c : Float}
 
 type alias XyData =
     { xDescription : String
@@ -171,6 +174,7 @@ type alias XyData =
     , zDescription : String
     , aDescription : String
     , bDescription : String
+    , cDescription : String
     , data : List Point
     }
 
@@ -185,6 +189,7 @@ type alias Title =
     , imdb_votes : Float
     , tmdb_popularity : Float
     , tmdb_score : Float
+    , seasons : Float
     }
 
 type PlotType
@@ -199,7 +204,7 @@ scatterplot model =
         
         xValues : List Float
         xValues =
-            List.map .z model.data -- x
+            List.map .c model.data -- x
 
         yValues : List Float
         yValues =
@@ -246,7 +251,7 @@ scatterplot model =
 
                 --, fontWeight FontWeightBold
                 ]
-                [ text model.zDescription ] -- name x
+                [ text model.cDescription ] -- name x
                 ]
     -- plot y axis             
          ,g[ transform [Translate(60) (60)]]
@@ -277,7 +282,7 @@ point scaleX scaleY xyPoint =
         , fontFamily [ "sans-serif" ]
         , transform
             [ Translate
-                (Scale.convert scaleX xyPoint.z) -- x
+                (Scale.convert scaleX xyPoint.c) -- x
                 (Scale.convert scaleY xyPoint.y) -- y
             ]
             -- Verschieben entlang der x/y-Achse
