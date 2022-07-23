@@ -1,27 +1,23 @@
 module Scatterplot exposing (..)
 
 import Axis
-import Html exposing (Html, button, div, label, option, select)
-import Html.Attributes exposing (for, id, value)
+import Html exposing (Html, button, div, option, select)
+import Html.Attributes exposing (id, value)
 import Http
 import Scale exposing (ContinuousScale)
-import Statistics
 import TypedSvg exposing (circle, g, style, svg, text_)
 import TypedSvg.Attributes exposing (class, fontFamily, fontSize, textAnchor, transform, viewBox)
 import TypedSvg.Attributes.InPx exposing (cx, cy, r, x, y)
 import TypedSvg.Core exposing (Svg)
 import TypedSvg.Types exposing (AnchorAlignment(..), FontWeight(..), Length(..), Transform(..), px)
-import Csv
-import Csv.Decode
 import Browser
 import Html exposing (ul,li)
 import Html.Events exposing (onClick)
 import TypedSvg.Core exposing (Svg, text)
-import TypedSvg.Filters.Attributes exposing (z)
 import List.Extra
-import Html exposing (param)
 import Html exposing (p)
 import Html exposing (h1)
+import Data exposing (DB(..), Title, defaultExtent, padding, h, w, tickCount, titleListe)
 
 main : Program () Model Msg
 main =
@@ -35,7 +31,7 @@ main =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( Laden
-    , holenVonCsv ErhalteText 0
+    , holenVonCsv GotText 0
     )
 
 subscriptions : Model -> Sub Msg
@@ -97,10 +93,10 @@ view model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ErhalteText result ->
+        GotText result ->
             case result of
                 Ok fullText ->
-                    ( Erfolg <| { data = titleListe [fullText] , att = IMVS }, Cmd.none )
+                    ( Erfolg <| { data = Data.titleListe [fullText] , att = IMVS }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -109,20 +105,20 @@ update msg model =
                 All ->
                     case model of
                         Erfolg m ->
-                            (Erfolg <| {data = m.data , att = m.att},holenVonCsv ErhalteText 0)
+                            (Erfolg <| {data = m.data , att = m.att},holenVonCsv GotText 0)
                         _ ->
                             ( model, Cmd.none )
                    
                 Movies ->
                     case model of
                         Erfolg m ->
-                            (Erfolg <| {data = m.data, att = m.att},holenVonCsv ErhalteText 1)
+                            (Erfolg <| {data = m.data, att = m.att},holenVonCsv GotText 1)
                         _ ->
                             ( model, Cmd.none )
                 Series ->
                     case model of
                         Erfolg m ->
-                            (Erfolg <| {data = m.data, att = m.att},holenVonCsv ErhalteText 2)
+                            (Erfolg <| {data = m.data, att = m.att},holenVonCsv GotText 2)
                         _ ->
                             ( model, Cmd.none )
         DropDown str ->
@@ -180,7 +176,7 @@ update msg model =
                 
 holenVonCsv : (Result Http.Error String -> Msg) -> Int -> Cmd Msg
 holenVonCsv x db = 
-    (List.Extra.getAt db liste) |> Maybe.withDefault("titleslesslessdf.csv")|> String.words
+    (List.Extra.getAt db Data.liste) |> Maybe.withDefault("titleslesslessdf.csv")|> String.words
         |> List.map
             (\dataset ->
                 Http.get
@@ -190,13 +186,6 @@ holenVonCsv x db =
             )
         |> Cmd.batch
 
-liste : List String
-liste =
-    [ 
-    "titleslesslessdf.csv",
-    "moviedf.csv",
-    "showdf.csv"
-    ]
 
 type Model
   = Fehlschlag
@@ -207,14 +196,10 @@ type Model
     }
 
 type Msg
-    = ErhalteText (Result Http.Error String)
-    | ChangeDB (DB)
+    = GotText (Result Http.Error String)
+    | ChangeDB (Data.DB)
     | DropDown String
 
-type DB
-    = All
-    | Movies
-    | Series
 
 filterAndReduceTitles : List Title -> XyData
 filterAndReduceTitles my_titles =
@@ -241,33 +226,6 @@ title2point title =
             |> andMap (Just title.tmdb_score)
             |> andMap (Just title.seasons) 
 
-csvStringZuDaten : String -> List Title
-csvStringZuDaten csvRoh =
-    Csv.parse csvRoh
-        |> Csv.Decode.decodeCsv dekodierenTitle
-        |> Result.toMaybe
-        |> Maybe.withDefault []
-
-dekodierenTitle : Csv.Decode.Decoder (Title -> a) a
-dekodierenTitle =
-    Csv.Decode.map Title
-        (Csv.Decode.field "id" Ok
-            |> Csv.Decode.andMap (Csv.Decode.field "title" Ok)
-            |> Csv.Decode.andMap (Csv.Decode.field "type" Ok)
-            |> Csv.Decode.andMap (Csv.Decode.field "release_year" (String.toFloat >> Result.fromMaybe "error parsing string"))
-            |> Csv.Decode.andMap (Csv.Decode.field "runtime"(String.toFloat >> Result.fromMaybe "error parsing string"))
-            |> Csv.Decode.andMap (Csv.Decode.field "imdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
-            |> Csv.Decode.andMap (Csv.Decode.field "imdb_votes"(String.toFloat >> Result.fromMaybe "error parsing string"))
-            |> Csv.Decode.andMap (Csv.Decode.field "tmdb_popularity"(String.toFloat >> Result.fromMaybe "error parsing string"))
-            |> Csv.Decode.andMap (Csv.Decode.field "tmdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
-            |> Csv.Decode.andMap (Csv.Decode.field "seasons"(String.toFloat >> Result.fromMaybe "error parsing string"))
-        ) -- xmts
-
-titleListe :List String -> List Title
-titleListe liste1 =
-    List.map(\t -> csvStringZuDaten t) liste1
-        |> List.concat
-
 
 type alias Point =
     { pointName : String, x : Float, y : Float, z : Float, a : Float, b : Float , c : Float } -- xmts
@@ -277,18 +235,7 @@ type alias XyData =
     }
 -- xmts
 
-type alias Title =
-    { id : String
-    , title : String
-    , typ : String
-    , release_year : Float
-    , runtime : Float
-    , imdb_score : Float
-    , imdb_votes : Float
-    , tmdb_popularity : Float
-    , tmdb_score : Float
-    , seasons : Float
-    }
+
 
 attToString : Att -> List String
 attToString att = 
@@ -365,8 +312,8 @@ scatterplot model att =
 
         labelPositions : { x : Float, y : Float }
         labelPositions =
-            { x = (wideExtent (Tuple.first(dataPoint)) |> half)
-            , y = (wideExtent (Tuple.second(dataPoint)) |> Tuple.second)
+            { x = (Data.wideExtent (Tuple.first(dataPoint)) |> half)
+            , y = (Data.wideExtent (Tuple.second(dataPoint)) |> Tuple.second)
             }
    
     in
@@ -374,9 +321,9 @@ scatterplot model att =
     
     svg [ viewBox 0 0 w h, TypedSvg.Attributes.width <| TypedSvg.Types.Percent 100, TypedSvg.Attributes.height <| TypedSvg.Types.Percent 100 ]
         [ style [] [ TypedSvg.Core.text """
-            .point circle { stroke: rgba(0, 0, 0,0.4); fill: rgba(255, 255, 255,0.3); }
+            .point circle { stroke: black; fill: rgba(255, 255, 255, 0.5); }
             .point text { display: none; }
-            .point:hover circle { stroke: rgba(0, 0, 0,1.0); fill: rgb(118, 214, 78); }
+            .point:hover circle { stroke: black; fill: rgba(4, 244, 251, 1); }
             .point:hover text { display: inline; }
           """ ]
     -- plot x axis    
@@ -388,7 +335,7 @@ scatterplot model att =
                 , y 35
 
                 -- , fontFamily [ "Helvetica", "sans-serif" ]
-                , fontSize (px 20)
+                , fontSize (px 15)
 
                 --, fontWeight FontWeightBold
                 ]
@@ -403,16 +350,16 @@ scatterplot model att =
                 , y -30
 
                 -- , fontFamily [ "Helvetica", "sans-serif" ]
-                , fontSize (px 20)
+                , fontSize (px 15)
 
                 --, fontWeight FontWeightBold
                 ]
                 [ text <| Maybe.withDefault("") <| List.Extra.getAt 1 <| attToString att ] -- name y
              ]
     -- plot points and description     
+         
          ,g [ transform [ Translate padding padding ] ]
             (List.map (point att xScaleLocal yScaleLocal) model.data)
-            -- map data with the defined variables
         ]
 
 point : Att -> ContinuousScale Float -> ContinuousScale Float -> Point -> Svg msg
@@ -446,63 +393,18 @@ point att scaleX scaleY xyPoint =
             [ circle [ cx 0, cy 0, r 5 ] []
             , text_ [ x 10, y -20, textAnchor AnchorMiddle ] [ Html.text xyPoint.pointName ]
             ]
-w : Float
-w =
-    900
--- width
-
-h : Float
-h =
-    450
--- height
-
-padding : Float
-padding =
-    60
--- 
-
-radius : Float
-radius =
-    5.0
-
-
-tickCount : Int
-tickCount =
-    5
-
-defaultExtent : ( number, number1 )
-defaultExtent =
-    ( 0, 100 )
 
 
 xScale : List Float -> ContinuousScale Float
 xScale values =
-    Scale.linear ( 0, w - 2 * padding ) ( wideExtent values )
+    Scale.linear ( 0, w - 2 * padding ) ( Data.wideExtent values )
 
 
 yScale : List Float -> ContinuousScale Float
 yScale values =
-    Scale.linear ( h - 2 * padding, 0 ) ( wideExtent values )
+    Scale.linear ( h - 2 * padding, 0 ) ( Data.wideExtent values )
  
-wideExtent : List Float -> ( Float, Float )
-wideExtent values =
-    let
-        scale: (Float, Float)
-        scale = Maybe.withDefault defaultExtent (Statistics.extent values)
 
-        range: Float
-        range = -(Tuple.first scale) + (Tuple.second scale)
-
-        down: Float
-        down = (Tuple.first scale) - range/(toFloat (2*tickCount))
-
-        up: Float
-        up = (Tuple.second scale) + range/(toFloat (2*tickCount))
-    in         
-        if (down < 0) then 
-            (0, up)
-        else
-            (down, up)
     
 xAxis : List Float -> Svg msg
 xAxis values =
