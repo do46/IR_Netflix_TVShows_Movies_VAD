@@ -18,6 +18,7 @@ import List.Extra
 import Html exposing (p)
 import Html exposing (h1)
 import Data exposing (DB(..), Title, defaultExtent, padding, h, w, tickCount, titleListe)
+import Data exposing (wideExtent)
 
 main : Program () Model Msg
 main =
@@ -225,14 +226,9 @@ title2point title =
             |> andMap (Just title.tmdb_popularity)
             |> andMap (Just title.tmdb_score)
             |> andMap (Just title.seasons) 
+-- ???
 
 
-type alias Point =
-    { pointName : String, x : Float, y : Float, z : Float, a : Float, b : Float , c : Float } -- xmts
-
-type alias XyData =
-    {  data : List Point
-    }
 -- xmts
 
 
@@ -312,8 +308,8 @@ scatterplot model att =
 
         labelPositions : { x : Float, y : Float }
         labelPositions =
-            { x = (Data.wideExtent (Tuple.first(dataPoint)) |> half)
-            , y = (Data.wideExtent (Tuple.second(dataPoint)) |> Tuple.second)
+            { x = (wideExtent (Tuple.first(dataPoint)) |> half)
+            , y = (wideExtent (Tuple.second(dataPoint)) |> Tuple.second)
             }
    
     in
@@ -414,3 +410,10 @@ xAxis values =
 yAxis : List Float -> Svg msg
 yAxis values =
     Axis.left [ Axis.tickCount tickCount ] (yScale values)
+
+type alias Point =
+    { pointName : String, x : Float, y : Float, z : Float, a : Float, b : Float , c : Float } -- xmts
+
+type alias XyData =
+    {  data : List Point
+    }

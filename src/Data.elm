@@ -20,6 +20,7 @@ type alias Title =
     , tmdb_popularity : Float
     , tmdb_score : Float
     , seasons : Float
+    , numberTags : Float
     }
 
 csvStringZuDaten : String -> List Title
@@ -42,6 +43,7 @@ dekodierenTitle =
             |> Csv.Decode.andMap (Csv.Decode.field "tmdb_popularity"(String.toFloat >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "tmdb_score"(String.toFloat >> Result.fromMaybe "error parsing string"))
             |> Csv.Decode.andMap (Csv.Decode.field "seasons"(String.toFloat >> Result.fromMaybe "error parsing string"))
+            |> Csv.Decode.andMap (Csv.Decode.field "numberTags"(String.toFloat >> Result.fromMaybe "error parsing string"))
         ) -- xmts
 
 titleListe :List String -> List Title
