@@ -1,4 +1,4 @@
-module ParallelCoordinates exposing (main)
+module ParallelCoordinates exposing (..)
 
 
 import Browser
@@ -125,10 +125,10 @@ paralleleKoordinatenPlan w ar bgrC model =
                 TypedSvg.Core.text """
                 .xray {stroke: white; stroke-width:1; opacity:0.1; fill: none}
                 .xray text {display: none;}
-                .parallelerPunkt { stroke: black; fill:none; opacity: 0.5;stroke-width:0.5}
-                .parallelerPunkt:hover {stroke: rgba(4, 244, 251, 1); stroke-width: 2.5}
-                .parallelerPunkt text { display: none; }
-                .parallelerPunkt:hover text { display: inline; stroke: black; stroke-width: 0.1; font-size: small; font-family: calibri}  
+                .normal { stroke: black; fill:none; opacity: 0.5;stroke-width:0.5}
+                .normal:hover {stroke: rgba(4, 244, 251, 1); stroke-width: 2.5}
+                .normal text { display: none; }
+                .normal:hover text { display: inline; stroke: black; stroke-width: 0.1; font-size: small; font-family: calibri}  
                 """
             ]
         , rect [x  0 , y 0, width (w + 2 * padding), height (h + 2 * padding)][]
@@ -177,12 +177,9 @@ paralleleKoordinatenPlan w ar bgrC model =
                                     p
                                     |> Shape.line Shape.linearCurve
                         in
-                        g [ if bgrC == 1 then class ["parallelerPunkt"] else class ["xray"]][
+                        g [ if bgrC == 1 then class ["normal"] else class ["xray"]][
                             Path.element linienWeg
-                            [
-                            --if bgrC == 1 then class ["parallelerPunkt"] else class ["xray"] 
-                             -- xmts
-                            ]
+                            []
                             , text_
                                 [ x 300
                                 , y -50
@@ -269,51 +266,56 @@ view model =
                                 ]
                             , p[][
                                 
-                                    Html.text <| "Please choose one of the following data type for axis 1 "
+                                    Html.text <| "Please choose one of the following attributes for axis 1: "
                                     , Html.button [onClick (ChangeAtt1 (.runtime, "Runtime"))][Html.text "Runtime"]
                                     , Html.button [onClick (ChangeAtt1 (.imdb_score, "IMDb score"))][Html.text "IMDb score"]
                                     , Html.button [onClick (ChangeAtt1 (.imdb_votes, "IMDb votes"))][Html.text "IMDb votes"]
                                     , Html.button [onClick (ChangeAtt1 (.tmdb_popularity, "TMDb popularity"))][Html.text "TMDb popularity"]
                                     , Html.button [onClick (ChangeAtt1 (.tmdb_score, "TMDb score"))][Html.text "TMDb score"]
                                     , Html.button [onClick (ChangeAtt1 (.seasons, "Seasons"))][Html.text "Seasons"]
-                                
+                                    , Html.button [onClick (ChangeAtt1 (.release_year, "Release year"))][Html.text "Release year"]
+                                    , Html.button [onClick (ChangeAtt1 (.numberTags, "Number of tags"))][Html.text "Number of tags"]
                             ]
                             , p[][
                                 
-                                    Html.text <| "Please choose one of the following data type for axis 2 "
+                                    Html.text <| "Please choose one of the following attributes for axis 2: "
                                     , Html.button [onClick (ChangeAtt2 (.runtime, "Runtime"))][Html.text "Runtime"]
                                     , Html.button [onClick (ChangeAtt2 (.imdb_score, "IMDb score"))][Html.text "IMDb score"]
                                     , Html.button [onClick (ChangeAtt2 (.imdb_votes, "IMDb votes"))][Html.text "IMDb votes"]
                                     , Html.button [onClick (ChangeAtt2 (.tmdb_popularity, "TMDb popularity"))][Html.text "TMDb popularity"]
                                     , Html.button [onClick (ChangeAtt2 (.tmdb_score, "TMDb score"))][Html.text "TMDb score"]
                                     , Html.button [onClick (ChangeAtt2 (.seasons, "Seasons"))][Html.text "Seasons"]
-                                
+                                    , Html.button [onClick (ChangeAtt2 (.release_year, "Release year"))][Html.text "Release year"]
+                                    , Html.button [onClick (ChangeAtt2 (.numberTags, "Number of tags"))][Html.text "Number of tags"]
                             ]
                             , p[][
                                 
-                                    Html.text <| "Please choose one of the following data type for axis 3 "
+                                    Html.text <| "Please choose one of the following attributes for axis 3: "
                                     , Html.button [onClick (ChangeAtt3 (.runtime, "Runtime"))][Html.text "Runtime"]
                                     , Html.button [onClick (ChangeAtt3 (.imdb_score, "IMDb score"))][Html.text "IMDb score"]
                                     , Html.button [onClick (ChangeAtt3 (.imdb_votes, "IMDb votes"))][Html.text "IMDb votes"]
                                     , Html.button [onClick (ChangeAtt3 (.tmdb_popularity, "TMDb popularity"))][Html.text "TMDb popularity"]
                                     , Html.button [onClick (ChangeAtt3 (.tmdb_score, "TMDb score"))][Html.text "TMDb score"]
                                     , Html.button [onClick (ChangeAtt3 (.seasons, "Seasons"))][Html.text "Seasons"]
-                                
+                                    , Html.button [onClick (ChangeAtt3 (.release_year, "Release year"))][Html.text "Release year"]
+                                    , Html.button [onClick (ChangeAtt3 (.numberTags, "Number of tags"))][Html.text "Number of tags"]
                             ]
                             , p[][
                                 
-                                    Html.text <| "Please choose one of the following data type for axis 4 "
+                                    Html.text <| "Please choose one of the following attributes for axis 4: "
                                     , Html.button [onClick (ChangeAtt4 (.runtime, "Runtime"))][Html.text "Runtime"]
                                     , Html.button [onClick (ChangeAtt4 (.imdb_score, "IMDb score"))][Html.text "IMDb score"]
                                     , Html.button [onClick (ChangeAtt4 (.imdb_votes, "IMDb votes"))][Html.text "IMDb votes"]
                                     , Html.button [onClick (ChangeAtt4 (.tmdb_popularity, "TMDb popularity"))][Html.text "TMDb popularity"]
                                     , Html.button [onClick (ChangeAtt4 (.tmdb_score, "TMDb score"))][Html.text "TMDb score"]
                                     , Html.button [onClick (ChangeAtt4 (.seasons, "Seasons"))][Html.text "Seasons"]
+                                    , Html.button [onClick (ChangeAtt4 (.release_year, "Release year"))][Html.text "Release year"]
+                                    , Html.button [onClick (ChangeAtt4 (.numberTags, "Number of tags"))][Html.text "Number of tags"]
                                 
                             ]
                             , p[][
                                 
-                                    Html.text <| "Please choose the mode "
+                                    Html.text <| "Please choose the mode: "
                                     , Html.button [onClick (ChangeMode(B))][Html.text "X-Ray"]
                                     , Html.button [onClick (ChangeMode(W))][Html.text "Normal"]
                                 

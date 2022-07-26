@@ -13,12 +13,13 @@ import Color
 import Browser
 import Html exposing (div, h1, p, button)
 import Html.Events exposing (onClick)
+import Html.Attributes as HA exposing (type_)
 import Http
 import List.Extra
 
-lange : Float
-lange = 
-    4
+--lange : Float
+--lange = 
+--    7
 
 inDegree : List Float -> List Float
 inDegree listvalue =
@@ -77,8 +78,27 @@ view model =
                     , button [onClick(ChangeDB(Movies))][text "Movies"]
                     , button [onClick(ChangeDB(Series))][text "Series"]
                     ]
-                    
-                    , stickfigureplot filteredTitles 
+                    {--, div []
+                    [ Html.input [ type_ "range"
+                            , HA.min "2"
+                            , HA.max "15"
+                            , HA.value <| String.fromFloat l.len
+                            , Html.Events.onInput ChangeLen
+                            ]
+                            []
+                            , text <| String.fromFloat l.len    
+                    ] 
+                    --} -- slider doesn't work well .-.
+                    , p [] 
+                    [
+                        text "Please adjust the size of stick figure:"
+                    ]
+                    , p []
+                            [ button [ onClick Increment ] [ text "+1" ]
+                            , text <| " " ++ (String.fromFloat l.len) ++ " "
+                            , button [ onClick Decrement ] [ text "-1" ]
+                            ]
+                    , stickfigureplot filteredTitles l.len
                     ]
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -87,7 +107,7 @@ update msg model =
         GotText result ->
             case result of
                 Ok fullText ->
-                    ( Erfolg <| { data = Data.titleListe [fullText] }, Cmd.none )
+                    ( Erfolg <| { data = Data.titleListe [fullText], len = 5 }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -96,22 +116,44 @@ update msg model =
                 All ->
                     case model of
                         Erfolg m ->
-                            (Erfolg <| {data = m.data },holenVonCsv GotText 0)
+                            (Erfolg <| {data = m.data, len = m.len },holenVonCsv GotText 0)
                         _ ->
                             ( model, Cmd.none )
                    
                 Movies ->
                     case model of
                         Erfolg m ->
-                            (Erfolg <| {data = m.data },holenVonCsv GotText 1)
+                            (Erfolg <| {data = m.data, len = m.len },holenVonCsv GotText 1)
                         _ ->
                             ( model, Cmd.none )
                 Series ->
                     case model of
                         Erfolg m ->
-                            (Erfolg <| {data = m.data },holenVonCsv GotText 2)
+                            (Erfolg <| {data = m.data, len = m.len },holenVonCsv GotText 2)
                         _ ->
                             ( model, Cmd.none )
+        {-- ChangeLen v ->
+                    case model of
+                        Erfolg m ->
+                            (Erfolg <| {data = m.data, len = Maybe.withDefault 0 <| String.toFloat v }, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none ) --}
+        Increment ->
+                    case model of
+                        Erfolg m ->
+                            (Erfolg <| {data = m.data, len = m.len + 1 }, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+        Decrement ->
+                    case model of
+                        Erfolg m ->
+                            (Erfolg <| {data = m.data, len = m.len - 1 }, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+                   
+                
+
+                
 
 holenVonCsv : (Result Http.Error String -> Msg) -> Int -> Cmd Msg
 holenVonCsv x db = 
@@ -130,12 +172,16 @@ type Model
   = Fehlschlag
   | Laden
   | Erfolg 
-    { data : List Title 
+    { data : List Title
+    , len : Float 
     }
 
 type Msg
     = GotText (Result Http.Error String)
     | ChangeDB (Data.DB)
+    --| ChangeLen (String)
+    | Increment
+    | Decrement
 
 filterAndReduceTitles : List Title -> XyData
 filterAndReduceTitles my_titles =
@@ -165,8 +211,8 @@ title2point title =
             |> andMap (Just title.release_year)
             |> andMap (Just title.numberTags)
 
-stickfigureplot : XyData -> Svg msg
-stickfigureplot model =
+stickfigureplot : XyData -> Float -> Svg msg
+stickfigureplot model len =
  -- funktionen und parameter deklarieren
     let
         
@@ -241,10 +287,10 @@ stickfigureplot model =
     
     svg [ viewBox 0 0 w h, TSA.width <| TST.Percent 100, TSA.height <| TST.Percent 100 ]
         [ style [] [ TypedSvg.Core.text """
-            .point circle { stroke: rgba(0, 0, 0,0.4); fill: rgba(255, 255, 255,0.3); }
-            .point text { display: none; }
-            .point:hover circle { stroke: rgba(0, 0, 0,1.0); fill: rgb(118, 214, 78); }
-            .point:hover text { display: inline; }
+            .line polyline { stroke: lightGrey; fill: rgba(255, 255, 255,0.3); ; stroke-width:1; }
+            .line text { display: none; }
+            .line:hover polyline { stroke: black; stroke-width:1.5; }
+            .line:hover text { display: inline; font-size: small }
           """ ]
     -- plot x axis    
          , g[ transform [ Translate (60) (390)]]
@@ -278,13 +324,14 @@ stickfigureplot model =
              ]
     -- plot points and description     
          ,g [ transform [ Translate padding padding ] ]
-            (List.map (stickfigure xScaleLocal yScaleLocal) 
+            (List.map (stickfigure xScaleLocal yScaleLocal len) 
                 uDegree 
                 |> andMapl vDegree 
                 |> andMapl pDegree 
                 |> andMapl qDegree 
                 |> andMapl zDegree 
                 |> andMapl model.data
+                
             )
             -- map data with the defined variables
         ]
@@ -293,56 +340,48 @@ andMapl : List a -> List (a -> b) -> List b
 andMapl = List.map2 (|>)
 
 
-stickfigure : ContinuousScale Float -> ContinuousScale Float -> Float -> Float -> Float -> Float -> Float -> Point -> Svg msg
-stickfigure scaleX scaleY uDegree vDegree pDegree qDegree zDegree xyPoint =
-        g
-            [ transform
-                [ Translate
-                    (Scale.convert scaleX xyPoint.b) -- x
-                    (Scale.convert scaleY xyPoint.y) -- y
+stickfigure : ContinuousScale Float -> ContinuousScale Float -> Float -> Float -> Float -> Float -> Float -> Float -> Point -> Svg msg
+stickfigure scaleX scaleY lange uDegree vDegree pDegree qDegree zDegree xyPoint  =
+        g [ class [ "line"] ]
+          [
+            g  
+                [ transform [ Translate (padding) padding ]
                 ]
-            ]
-            
-            [ polyline
-                    [ TSA.fill <| TST.PaintNone
-                    , TSA.stroke <| TST.Paint Color.black
-                    , TSA.strokeWidth (px 1)
-                    , TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), ( -lange/2*cos(degrees uDegree), -lange/2*sin(degrees uDegree)) ]
+                [ text_ [ x  320, y -100, textAnchor AnchorMiddle ] [ Html.text xyPoint.pointName ]
+                ]
+            , g
+                [   transform
+                    [ Translate
+                        (Scale.convert scaleX xyPoint.b) -- x
+                        (Scale.convert scaleY xyPoint.y) -- y
                     ]
-                    []
-            , polyline
-                    [ TSA.fill <| TST.PaintNone
-                    , TSA.stroke <| TST.Paint Color.black
-                    , TSA.strokeWidth (px 1)
-                    , TSA.points [ ( (-lange/2)*cos(degrees uDegree), (-lange/2)*sin(degrees uDegree) ), ( (-lange/2)*cos(degrees uDegree) + lange*cos(degrees vDegree), -lange/2*sin(degrees uDegree) - lange*sin(degrees vDegree) ) ]
-                    ]
-                    []
-
-            , polyline
-                    [ TSA.fill <| TST.PaintNone
-                    , TSA.stroke <| TST.Paint Color.black
-                    , TSA.strokeWidth (px 1)
-                    , TSA.points [ ( (-lange/2)*cos(degrees uDegree), (-lange/2)*sin(degrees uDegree) ), ( -lange/2*cos(degrees uDegree) - lange*cos(degrees pDegree), -lange/2*sin(degrees uDegree) - lange*sin(degrees pDegree) ) ]
-                    ]
-                    []
-
-            , polyline
-                    [ TSA.fill <| TST.PaintNone
-                    , TSA.stroke <| TST.Paint Color.black
-                    , TSA.strokeWidth (px 1)
-                    , TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), ( lange/2*cos(degrees uDegree) + lange*cos(degrees qDegree), lange/2*sin(degrees uDegree) + lange*sin(degrees qDegree) ) ]
-                    ]
-                    []
+                ]
                 
-            , polyline
-                    [ TSA.fill <| TST.PaintNone
-                    , TSA.stroke <| TST.Paint Color.black
-                    , TSA.strokeWidth (px 1)
-                    , TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), ( lange/2*cos(degrees uDegree) - lange*cos(degrees zDegree), lange/2*sin(degrees uDegree) + lange*sin(degrees zDegree) ) ]
-                    ]
-                    []
-            ]
+                [ polyline
+                        [ TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), ( -lange/2*cos(degrees uDegree), -lange/2*sin(degrees uDegree)) ]
+                        ]
+                        []
+                , polyline
+                        [ TSA.points [ ( (-lange/2)*cos(degrees uDegree), (-lange/2)*sin(degrees uDegree) ), ( (-lange/2)*cos(degrees uDegree) + lange*cos(degrees vDegree), -lange/2*sin(degrees uDegree) - lange*sin(degrees vDegree) ) ]
+                        ]
+                        []
 
+                , polyline
+                        [ TSA.points [ ( (-lange/2)*cos(degrees uDegree), (-lange/2)*sin(degrees uDegree) ), ( -lange/2*cos(degrees uDegree) - lange*cos(degrees pDegree), -lange/2*sin(degrees uDegree) - lange*sin(degrees pDegree) ) ]
+                        ]
+                        []
+
+                , polyline
+                        [ TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), ( lange/2*cos(degrees uDegree) + lange*cos(degrees qDegree), lange/2*sin(degrees uDegree) + lange*sin(degrees qDegree) ) ]
+                        ]
+                        []
+                    
+                , polyline
+                        [ TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), ( lange/2*cos(degrees uDegree) - lange*cos(degrees zDegree), lange/2*sin(degrees uDegree) + lange*sin(degrees zDegree) ) ]
+                        ]
+                        []
+                ]
+          ]
 
 
 

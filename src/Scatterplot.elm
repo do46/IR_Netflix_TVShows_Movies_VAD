@@ -85,7 +85,9 @@ view model =
                         , option [ value "e" ] [ text "Runtime and TMDb popularity" ] 
                         , option [ value "f" ] [ text "Number of seasons and TMDb score" ] 
                         , option [ value "g" ] [ text "Number of seasons and IMDb score" ] 
-                        , option [ value "h" ] [ text "Number of seasons and TMDb popularity" ]    
+                        , option [ value "h" ] [ text "Number of seasons and TMDb popularity" ]
+                        , option [ value "k" ] [ text "Number of tags and TMDb popularity" ]
+                        , option [ value "i" ] [ text "Number of tags and IMDb votes" ]    
                         ]
                     ]
                     , scatterplot filteredTitles l.att
@@ -172,6 +174,18 @@ update msg model =
                             (Erfolg <| {data = m.data, att = TMSP}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
+                "k" ->
+                    case model of
+                        Erfolg m ->
+                            (Erfolg <| {data = m.data, att = TMTP}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+                "i" ->
+                    case model of
+                        Erfolg m ->
+                            (Erfolg <| {data = m.data, att = IMTV}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
                 _ ->
                     (model, Cmd.none) 
                 
@@ -206,12 +220,13 @@ filterAndReduceTitles : List Title -> XyData
 filterAndReduceTitles my_titles =
     XyData <| List.filterMap title2point my_titles -- xmts
 
-pointLabel : String -> Float -> Float -> Float -> Float -> Float -> Float -> Point -- xmts
-pointLabel title imdb_score imdb_votes runtime tmdb_popularity tmdb_score seasons = -- xmts
+pointLabel : String -> Float -> Float -> Float -> Float -> Float -> Float -> Float -> Float -> Point -- xmts
+pointLabel title imdb_score imdb_votes runtime tmdb_popularity tmdb_score seasons release_year numberTags = -- xmts
     Point (title ++ " (" ++ String.fromFloat imdb_votes ++ ", " ++ String.fromFloat imdb_score
         ++ String.fromFloat runtime ++ ", " ++ String.fromFloat tmdb_popularity ++ ", " 
-        ++ String.fromFloat tmdb_score ++ ", " ++ String.fromFloat seasons ++")") 
-        (imdb_votes) (imdb_score) (runtime) (tmdb_popularity) (tmdb_score) (seasons) -- xmts
+        ++ String.fromFloat tmdb_score ++ ", " ++ String.fromFloat seasons ++ ", "
+        ++ String.fromFloat release_year ++ ", " ++ String.fromFloat numberTags ++ ")") 
+        (imdb_votes) (imdb_score) (runtime) (tmdb_popularity) (tmdb_score) (seasons) (release_year) (numberTags) -- xmts
 
 andMap : Maybe a -> Maybe (a -> b) -> Maybe b
 andMap = Maybe.map2 (|>)
@@ -225,8 +240,9 @@ title2point title =
             |> andMap (Just title.runtime)
             |> andMap (Just title.tmdb_popularity)
             |> andMap (Just title.tmdb_score)
-            |> andMap (Just title.seasons) 
--- ???
+            |> andMap (Just title.seasons)
+            |> andMap (Just title.release_year)
+            |> andMap (Just title.numberTags) 
 
 
 -- xmts
@@ -244,6 +260,8 @@ attToString att =
         TMSS -> ["Seasons","TMDb score"] -- tmdb season vs score
         IMSS -> ["Seasons","IMDb score"] -- imdb season vs score
         TMSP -> ["Seasons","TMDb popularity"] -- imdb season vs pop
+        TMTP -> ["Number of Tags","TMDb popularity"] -- tmdb tags vs pop
+        IMTV -> ["Number of Tags","IMDb votes"] -- imdb tags vs vote
 
 type Att
     = IMVS -- imdb vote vs score
@@ -254,6 +272,9 @@ type Att
     | TMSS -- tmdb season vs score
     | IMSS -- imdb season vs score
     | TMSP -- tmdb season vs pop
+    | TMTP -- tmdb tags vs pop
+    | IMTV  -- imdb tags vs vote
+
 
 scatterplot : XyData -> Att -> Svg msg
 scatterplot model att =
@@ -282,6 +303,10 @@ scatterplot model att =
         cValues =
             List.map .c model.data -- c
 
+        eValues : List Float
+        eValues =
+            List.map .e model.data -- e
+
         dataPoint : ( List Float, List Float )
         dataPoint =
             case att of
@@ -293,7 +318,8 @@ scatterplot model att =
                 TMSS -> ( cValues, bValues ) -- tmdb season vs score
                 IMSS -> ( cValues, yValues ) -- imdb season vs score
                 TMSP -> ( cValues, aValues ) -- imdb season vs pop
-
+                TMTP -> ( eValues, aValues ) -- imdb season vs pop
+                IMTV -> ( eValues, xValues )
         xScaleLocal : ContinuousScale Float
         xScaleLocal =
             xScale <| Tuple.first(dataPoint)
@@ -320,7 +346,7 @@ scatterplot model att =
             .point circle { stroke: black; fill: rgba(255, 255, 255, 0.5); }
             .point text { display: none; }
             .point:hover circle { stroke: black; fill: rgba(4, 244, 251, 1); }
-            .point:hover text { display: inline; }
+            .point:hover text { display: inline; font-size: small; }
           """ ]
     -- plot x axis    
          , g[ transform [ Translate (60) (390)]]
@@ -372,24 +398,31 @@ point att scaleX scaleY xyPoint =
                 TMSS -> ( xyPoint.c, xyPoint.b ) -- tmdb season vs score
                 IMSS -> ( xyPoint.c, xyPoint.y ) -- imdb season vs score
                 TMSP -> ( xyPoint.c, xyPoint.a ) -- imdb season vs pop
+                TMTP -> ( xyPoint.e, xyPoint.a ) -- imdb season vs pop
+                IMTV -> ( xyPoint.e, xyPoint.x )
     in
-    
-        g
-            [ class [ "point" ]
-            , fontSize <| Px 10.0
-            , fontFamily [ "sans-serif" ]
-            , transform
-                [ Translate
-                    (Scale.convert scaleX <| Tuple.first(dataPoint)) 
-                    (Scale.convert scaleY <| Tuple.second(dataPoint)) 
+        g [ class ["point"] ]    
+          [  
+            g  
+                [ transform [ Translate (padding) padding ]
                 ]
-                -- Verschieben entlang der x/y-Achse
+                [ text_ [ x  320, y -100, textAnchor AnchorMiddle ] [ Html.text xyPoint.pointName ]
+                ]
+            , g
+                [ fontSize <| Px 10.0
+                , fontFamily [ "sans-serif" ]
+                , transform
+                    [ Translate
+                        (Scale.convert scaleX <| Tuple.first(dataPoint)) 
+                        (Scale.convert scaleY <| Tuple.second(dataPoint)) 
+                    ]
+                    -- Verschieben entlang der x/y-Achse
+                ]
+                -- Formatierung von class "point"
+                [ circle [ cx 0, cy 0, r 5 ] []
+                --, text_ [ x 10, y -20, textAnchor AnchorMiddle ] [ Html.text xyPoint.pointName ]
+                ]
             ]
-            -- Formatierung von class "point"
-            [ circle [ cx 0, cy 0, r 5 ] []
-            , text_ [ x 10, y -20, textAnchor AnchorMiddle ] [ Html.text xyPoint.pointName ]
-            ]
-
 
 xScale : List Float -> ContinuousScale Float
 xScale values =
@@ -412,7 +445,7 @@ yAxis values =
     Axis.left [ Axis.tickCount tickCount ] (yScale values)
 
 type alias Point =
-    { pointName : String, x : Float, y : Float, z : Float, a : Float, b : Float , c : Float } -- xmts
+    { pointName : String, x : Float, y : Float, z : Float, a : Float, b : Float , c : Float , d : Float , e : Float } -- xmts
 
 type alias XyData =
     {  data : List Point
