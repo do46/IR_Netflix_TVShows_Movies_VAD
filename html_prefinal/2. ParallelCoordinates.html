@@ -5388,7 +5388,7 @@ var $elm$browser$Browser$element = _Browser_element;
 var $author$project$ParallelCoordinates$GotText = function (a) {
 	return {$: 'GotText', a: a};
 };
-var $author$project$ParallelCoordinates$Laden = {$: 'Laden'};
+var $author$project$ParallelCoordinates$Loading = {$: 'Loading'};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -6236,16 +6236,16 @@ var $author$project$ParallelCoordinates$holenVonCsv = F2(
 	});
 var $author$project$ParallelCoordinates$init = function (_v0) {
 	return _Utils_Tuple2(
-		$author$project$ParallelCoordinates$Laden,
+		$author$project$ParallelCoordinates$Loading,
 		A2($author$project$ParallelCoordinates$holenVonCsv, $author$project$ParallelCoordinates$GotText, 0));
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$ParallelCoordinates$subscriptions = function (model) {
+var $author$project$ParallelCoordinates$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
-var $author$project$ParallelCoordinates$Erfolg = function (a) {
-	return {$: 'Erfolg', a: a};
+var $author$project$ParallelCoordinates$Success = function (a) {
+	return {$: 'Success', a: a};
 };
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$List$append = F2(
@@ -6743,32 +6743,32 @@ var $author$project$ParallelCoordinates$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'GotText':
-				var ergebnis = msg.a;
-				if (ergebnis.$ === 'Ok') {
-					var fullText = ergebnis.a;
+				var output = msg.a;
+				if (output.$ === 'Ok') {
+					var fullText = output.a;
 					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Erfolg(
+						$author$project$ParallelCoordinates$Success(
 							{
 								cl: 1,
 								data: $author$project$Data$titleListe(
 									_List_fromArray(
 										[fullText])),
-								dritteFunktion: function ($) {
-									return $.imdb_votes;
-								},
-								dritterName: 'IMDb votes',
-								ersteFunktion: function ($) {
+								firstFunction: function ($) {
 									return $.runtime;
 								},
-								ersterName: 'Runtime',
-								vierteFunktion: function ($) {
+								firstName: 'Runtime',
+								fourthFunction: function ($) {
 									return $.tmdb_popularity;
 								},
-								vierterName: 'TMDb popularity',
-								zweiteFunktion: function ($) {
+								fourthName: 'TMDb popularity',
+								secondFunction: function ($) {
 									return $.imdb_score;
 								},
-								zweiterName: 'IMDb score'
+								secondName: 'IMDb score',
+								thirdFunction: function ($) {
+									return $.imdb_votes;
+								},
+								thirdName: 'IMDb votes'
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -6778,11 +6778,11 @@ var $author$project$ParallelCoordinates$update = F2(
 				var _v2 = msg.a;
 				var x = _v2.a;
 				var a = _v2.b;
-				if (model.$ === 'Erfolg') {
+				if (model.$ === 'Success') {
 					var m = model.a;
 					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Erfolg(
-							{cl: m.cl, data: m.data, dritteFunktion: m.dritteFunktion, dritterName: m.dritterName, ersteFunktion: x, ersterName: a, vierteFunktion: m.vierteFunktion, vierterName: m.vierterName, zweiteFunktion: m.zweiteFunktion, zweiterName: m.zweiterName}),
+						$author$project$ParallelCoordinates$Success(
+							{cl: m.cl, data: m.data, firstFunction: x, firstName: a, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6791,11 +6791,11 @@ var $author$project$ParallelCoordinates$update = F2(
 				var _v4 = msg.a;
 				var y = _v4.a;
 				var a = _v4.b;
-				if (model.$ === 'Erfolg') {
+				if (model.$ === 'Success') {
 					var m = model.a;
 					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Erfolg(
-							{cl: m.cl, data: m.data, dritteFunktion: m.dritteFunktion, dritterName: m.dritterName, ersteFunktion: m.ersteFunktion, ersterName: m.ersterName, vierteFunktion: m.vierteFunktion, vierterName: m.vierterName, zweiteFunktion: y, zweiterName: a}),
+						$author$project$ParallelCoordinates$Success(
+							{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: y, secondName: a, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6804,11 +6804,11 @@ var $author$project$ParallelCoordinates$update = F2(
 				var _v6 = msg.a;
 				var z = _v6.a;
 				var a = _v6.b;
-				if (model.$ === 'Erfolg') {
+				if (model.$ === 'Success') {
 					var m = model.a;
 					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Erfolg(
-							{cl: m.cl, data: m.data, dritteFunktion: z, dritterName: a, ersteFunktion: m.ersteFunktion, ersterName: m.ersterName, vierteFunktion: m.vierteFunktion, vierterName: m.vierterName, zweiteFunktion: m.zweiteFunktion, zweiterName: m.zweiterName}),
+						$author$project$ParallelCoordinates$Success(
+							{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: z, thirdName: a}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6817,11 +6817,11 @@ var $author$project$ParallelCoordinates$update = F2(
 				var _v8 = msg.a;
 				var c = _v8.a;
 				var a = _v8.b;
-				if (model.$ === 'Erfolg') {
+				if (model.$ === 'Success') {
 					var m = model.a;
 					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Erfolg(
-							{cl: m.cl, data: m.data, dritteFunktion: m.dritteFunktion, dritterName: m.dritterName, ersteFunktion: m.ersteFunktion, ersterName: m.ersterName, vierteFunktion: c, vierterName: a, zweiteFunktion: m.zweiteFunktion, zweiterName: m.zweiterName}),
+						$author$project$ParallelCoordinates$Success(
+							{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: c, fourthName: a, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6830,31 +6830,31 @@ var $author$project$ParallelCoordinates$update = F2(
 				var para = msg.a;
 				switch (para.$) {
 					case 'All':
-						if (model.$ === 'Erfolg') {
+						if (model.$ === 'Success') {
 							var m = model.a;
 							return _Utils_Tuple2(
-								$author$project$ParallelCoordinates$Erfolg(
-									{cl: m.cl, data: m.data, dritteFunktion: m.dritteFunktion, dritterName: m.dritterName, ersteFunktion: m.ersteFunktion, ersterName: m.ersterName, vierteFunktion: m.vierteFunktion, vierterName: m.vierterName, zweiteFunktion: m.zweiteFunktion, zweiterName: m.zweiterName}),
+								$author$project$ParallelCoordinates$Success(
+									{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
 								A2($author$project$ParallelCoordinates$holenVonCsv, $author$project$ParallelCoordinates$GotText, 0));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
 					case 'Movies':
-						if (model.$ === 'Erfolg') {
+						if (model.$ === 'Success') {
 							var m = model.a;
 							return _Utils_Tuple2(
-								$author$project$ParallelCoordinates$Erfolg(
-									{cl: m.cl, data: m.data, dritteFunktion: m.dritteFunktion, dritterName: m.dritterName, ersteFunktion: m.ersteFunktion, ersterName: m.ersterName, vierteFunktion: m.vierteFunktion, vierterName: m.vierterName, zweiteFunktion: m.zweiteFunktion, zweiterName: m.zweiterName}),
+								$author$project$ParallelCoordinates$Success(
+									{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
 								A2($author$project$ParallelCoordinates$holenVonCsv, $author$project$ParallelCoordinates$GotText, 1));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
 					default:
-						if (model.$ === 'Erfolg') {
+						if (model.$ === 'Success') {
 							var m = model.a;
 							return _Utils_Tuple2(
-								$author$project$ParallelCoordinates$Erfolg(
-									{cl: m.cl, data: m.data, dritteFunktion: m.dritteFunktion, dritterName: m.dritterName, ersteFunktion: m.ersteFunktion, ersterName: m.ersterName, vierteFunktion: m.vierteFunktion, vierterName: m.vierterName, zweiteFunktion: m.zweiteFunktion, zweiterName: m.zweiterName}),
+								$author$project$ParallelCoordinates$Success(
+									{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
 								A2($author$project$ParallelCoordinates$holenVonCsv, $author$project$ParallelCoordinates$GotText, 2));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6863,21 +6863,21 @@ var $author$project$ParallelCoordinates$update = F2(
 			default:
 				var color = msg.a;
 				if (color.$ === 'B') {
-					if (model.$ === 'Erfolg') {
+					if (model.$ === 'Success') {
 						var m = model.a;
 						return _Utils_Tuple2(
-							$author$project$ParallelCoordinates$Erfolg(
-								{cl: 0, data: m.data, dritteFunktion: m.dritteFunktion, dritterName: m.dritterName, ersteFunktion: m.ersteFunktion, ersterName: m.ersterName, vierteFunktion: m.vierteFunktion, vierterName: m.vierterName, zweiteFunktion: m.zweiteFunktion, zweiterName: m.zweiterName}),
+							$author$project$ParallelCoordinates$Success(
+								{cl: 0, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
 							$elm$core$Platform$Cmd$none);
 					} else {
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 					}
 				} else {
-					if (model.$ === 'Erfolg') {
+					if (model.$ === 'Success') {
 						var m = model.a;
 						return _Utils_Tuple2(
-							$author$project$ParallelCoordinates$Erfolg(
-								{cl: 1, data: m.data, dritteFunktion: m.dritteFunktion, dritterName: m.dritterName, ersteFunktion: m.ersteFunktion, ersterName: m.ersterName, vierteFunktion: m.vierteFunktion, vierterName: m.vierterName, zweiteFunktion: m.zweiteFunktion, zweiterName: m.zweiterName}),
+							$author$project$ParallelCoordinates$Success(
+								{cl: 1, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
 							$elm$core$Platform$Cmd$none);
 					} else {
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6910,9 +6910,9 @@ var $author$project$ParallelCoordinates$MultiDimData = F2(
 	function (dimDescription, data) {
 		return {data: data, dimDescription: dimDescription};
 	});
-var $author$project$ParallelCoordinates$MultiDimPunkt = F2(
-	function (punktName, value) {
-		return {punktName: punktName, value: value};
+var $author$project$ParallelCoordinates$MultiDimPoint = F2(
+	function (pointName, value) {
+		return {pointName: pointName, value: value};
 	});
 var $author$project$Data$Series = {$: 'Series'};
 var $author$project$ParallelCoordinates$W = {$: 'W'};
@@ -6982,7 +6982,6 @@ var $gampleman$elm_visualization$Scale$convert = F2(
 		var scale = _v0.a;
 		return A3(scale.convert, scale.domain, scale.range, value);
 	});
-var $author$project$ParallelCoordinates$einteilungAchseZahl = 8;
 var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
@@ -8494,6 +8493,7 @@ var $folkertdev$one_true_path_experiment$Curve$linear = function (points) {
 };
 var $gampleman$elm_visualization$Shape$linearCurve = $folkertdev$one_true_path_experiment$Curve$linear;
 var $elm$core$List$map3 = _List_map3;
+var $author$project$ParallelCoordinates$noAxis = 8;
 var $author$project$Data$padding = 60;
 var $elm_community$typed_svg$TypedSvg$rect = $elm_community$typed_svg$TypedSvg$Core$node('rect');
 var $elm_community$typed_svg$TypedSvg$Attributes$stroke = A2(
@@ -8747,7 +8747,7 @@ var $elm_community$typed_svg$TypedSvg$Attributes$InPx$y = function (value) {
 	return $elm_community$typed_svg$TypedSvg$Attributes$y(
 		$elm_community$typed_svg$TypedSvg$Types$px(value));
 };
-var $author$project$ParallelCoordinates$paralleleKoordinatenPlan = F4(
+var $author$project$ParallelCoordinates$parCoord = F4(
 	function (w, ar, bgrC, model) {
 		var xSkala = A2(
 			$gampleman$elm_visualization$Scale$linear,
@@ -8774,7 +8774,7 @@ var $author$project$ParallelCoordinates$paralleleKoordinatenPlan = F4(
 			$gampleman$elm_visualization$Axis$left(
 				_List_fromArray(
 					[
-						$gampleman$elm_visualization$Axis$tickCount($author$project$ParallelCoordinates$einteilungAchseZahl)
+						$gampleman$elm_visualization$Axis$tickCount($author$project$ParallelCoordinates$noAxis)
 					])),
 			listeSkala);
 		return A2(
@@ -8891,9 +8891,9 @@ var $author$project$ParallelCoordinates$paralleleKoordinatenPlan = F4(
 							]))
 					]),
 				function () {
-					var zeichnePunkt = F3(
-						function (p, name, beschreibung) {
-							var linienWeg = A2(
+					var drawPoint = F3(
+						function (p, name, description) {
+							var linePath = A2(
 								$gampleman$elm_visualization$Shape$line,
 								$gampleman$elm_visualization$Shape$linearCurve,
 								A4(
@@ -8923,7 +8923,7 @@ var $author$project$ParallelCoordinates$paralleleKoordinatenPlan = F4(
 									]),
 								_List_fromArray(
 									[
-										A2($folkertdev$one_true_path_experiment$Path$element, linienWeg, _List_Nil),
+										A2($folkertdev$one_true_path_experiment$Path$element, linePath, _List_Nil),
 										A2(
 										$elm_community$typed_svg$TypedSvg$text_,
 										_List_fromArray(
@@ -8947,7 +8947,7 @@ var $author$project$ParallelCoordinates$paralleleKoordinatenPlan = F4(
 																	return ', ' + (b + (': ' + $elm$core$String$fromFloat(a)));
 																}),
 															p,
-															beschreibung))))
+															description))))
 											]))
 									]));
 						});
@@ -8967,7 +8967,7 @@ var $author$project$ParallelCoordinates$paralleleKoordinatenPlan = F4(
 								A2(
 									$elm$core$List$map,
 									function (a) {
-										return A3(zeichnePunkt, a.value, a.punktName, model.dimDescription);
+										return A3(drawPoint, a.value, a.pointName, model.dimDescription);
 									},
 									dataset));
 						},
@@ -8977,10 +8977,10 @@ var $author$project$ParallelCoordinates$paralleleKoordinatenPlan = F4(
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$ParallelCoordinates$view = function (model) {
 	switch (model.$) {
-		case 'Fehlschlag':
-			return $elm$html$Html$text('Ich konnte Ihre Title nicht öffnen.');
-		case 'Laden':
-			return $elm$html$Html$text('Title werden geöffnet...');
+		case 'Error':
+			return $elm$html$Html$text('I cannot open your data.');
+		case 'Loading':
+			return $elm$html$Html$text('Loading...');
 		default:
 			var l = model.a;
 			var numberTitles = $elm$core$List$length(l.data);
@@ -9004,7 +9004,7 @@ var $author$project$ParallelCoordinates$view = function (model) {
 																$elm$core$List$map,
 																function (x) {
 																	return A2(
-																		$author$project$ParallelCoordinates$MultiDimPunkt,
+																		$author$project$ParallelCoordinates$MultiDimPoint,
 																		e(x),
 																		_List_fromArray(
 																			[
@@ -9026,10 +9026,10 @@ var $author$project$ParallelCoordinates$view = function (model) {
 					};
 				};
 			};
-			var plotDaten = multiDimDaten(l.data)(l.ersteFunktion)(l.zweiteFunktion)(l.dritteFunktion)(l.vierteFunktion)(
+			var plotDaten = multiDimDaten(l.data)(l.firstFunction)(l.secondFunction)(l.thirdFunction)(l.fourthFunction)(
 				function ($) {
 					return $.title;
-				})(l.ersterName)(l.zweiterName)(l.dritterName)(l.vierterName);
+				})(l.firstName)(l.secondName)(l.thirdName)(l.fourthName);
 			return A2(
 				$elm$html$Html$div,
 				_List_Nil,
@@ -9671,7 +9671,7 @@ var $author$project$ParallelCoordinates$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								A4($author$project$ParallelCoordinates$paralleleKoordinatenPlan, 600, 2, l.cl, plotDaten)
+								A4($author$project$ParallelCoordinates$parCoord, 600, 2, l.cl, plotDaten)
 							]))
 					]));
 	}

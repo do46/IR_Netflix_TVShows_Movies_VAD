@@ -3,41 +3,38 @@ module ParallelCoordinates exposing (..)
 
 import Browser
 import Axis
-import Html exposing (Html, a, li, ul)
+import Html exposing (Html, a)
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
-import Scale exposing (ContinuousScale)
-import TypedSvg exposing (circle, g, rect, style, svg, text_, polygon, line)
-import TypedSvg.Attributes exposing (class, fontFamily, fontSize, textAnchor, transform, viewBox, fill, stroke, points, rotate, opacity)
-import TypedSvg.Attributes.InPx exposing (cx, cy, height, r, width, x, y, strokeWidth, x1, y1, x2, y2)
+import TypedSvg exposing ( g, rect, svg, text_)
+import TypedSvg.Attributes exposing (class, fontFamily, fontSize, textAnchor, transform, viewBox)
+import TypedSvg.Attributes.InPx exposing (height, width, x, y)
 import TypedSvg.Core exposing (Svg)
 import TypedSvg.Types exposing (AnchorAlignment(..), Length(..), Transform(..), Paint(..), Opacity(..))
 import Path
 import Color exposing (Color)
 import Shape
-import Array exposing (Array)
-import Html.Attributes exposing (style)
-import Data exposing (DB(..), Title, defaultExtent, padding, h, w, tickCount, liste)
+import Data exposing (DB(..), Title, padding, h, w)
 import Http
 import List.Extra
-import Html.Attributes exposing (style)
 import Html exposing (p)
 import Html exposing (h1)
 import Color exposing (black, white)
+import Scale
 
 type Model
-  = Fehlschlag
-  | Laden
-  | Erfolg 
+  = Error
+  | Loading
+  | Success 
     { data : List Title
-    , ersteFunktion : Title -> Float
-    , zweiteFunktion : Title -> Float
-    , dritteFunktion : Title -> Float
-    , vierteFunktion : Title -> Float
-    , ersterName : String
-    , zweiterName : String
-    , dritterName : String
-    , vierterName : String
+    , firstFunction : Title -> Float
+    , secondFunction : Title -> Float
+    , thirdFunction : Title -> Float
+    , fourthFunction : Title -> Float
+    , firstName : String
+    , secondName : String
+    , thirdName : String
+    , fourthName : String
     , cl : Int
     }
 
@@ -55,12 +52,12 @@ type Mode
     = B
     | W
 
-type alias MultiDimPunkt =
-    { punktName : String, value : List Float }
+type alias MultiDimPoint =
+    { pointName : String, value : List Float }
 
 type alias MultiDimData =
     { dimDescription : List String
-    , data : List (List MultiDimPunkt)
+    , data : List (List MultiDimPoint)
     }
 
 
@@ -77,16 +74,16 @@ holenVonCsv x db =
             )
         |> Cmd.batch
 
-einteilungAchseZahl : Int
-einteilungAchseZahl =
+noAxis : Int
+noAxis =
     8
 
 bgrc : List Color
 bgrc = [ black , white ]
 
 
-paralleleKoordinatenPlan : Float -> Float -> Int -> MultiDimData -> Svg msg
-paralleleKoordinatenPlan w ar bgrC model =
+parCoord : Float -> Float -> Int -> MultiDimData -> Svg msg
+parCoord w ar bgrC model =
     let
         h : Float
         h =
@@ -107,7 +104,7 @@ paralleleKoordinatenPlan w ar bgrC model =
             List.map (Scale.linear ( h, 0 )) listeWeiteErweiterung
 
         listeAchse =
-            List.map (Axis.left [ Axis.tickCount einteilungAchseZahl ]) listeSkala
+            List.map (Axis.left [ Axis.tickCount noAxis ]) listeSkala
 
         xSkala =
             Scale.linear ( 0, w ) ( 1, List.length model.dimDescription |> toFloat )
@@ -161,10 +158,10 @@ paralleleKoordinatenPlan w ar bgrC model =
             ]
         ]
             ++ (let
-                    zeichnePunkt p name beschreibung =
+                    drawPoint p name description =
                         let
-                            linienWeg : Path.Path
-                            linienWeg =
+                            linePath : Path.Path
+                            linePath =
                                 List.map3
                                     (\desc s px ->
                                         Just
@@ -178,7 +175,7 @@ paralleleKoordinatenPlan w ar bgrC model =
                                     |> Shape.line Shape.linearCurve
                         in
                         g [ if bgrC == 1 then class ["normal"] else class ["xray"]][
-                            Path.element linienWeg
+                            Path.element linePath
                             []
                             , text_
                                 [ x 300
@@ -188,7 +185,7 @@ paralleleKoordinatenPlan w ar bgrC model =
 
                                 
                                 ]
-                                [ TypedSvg.Core.text (name++ (String.concat<|(List.map2(\a b-> ", " ++b++ ": "++ (String.fromFloat a))p beschreibung)))]
+                                [ TypedSvg.Core.text (name++ (String.concat<|(List.map2(\a b-> ", " ++b++ ": "++ (String.fromFloat a))p description)))]
                                 
                         ]
                         
@@ -197,7 +194,7 @@ paralleleKoordinatenPlan w ar bgrC model =
                     |> List.map
                         (\dataset ->
                             g [ transform [ Translate (padding - 1) padding ] ]
-                                (List.map (\a -> zeichnePunkt a.value a.punktName model.dimDescription) dataset)
+                                (List.map (\a -> drawPoint a.value a.pointName model.dimDescription) dataset)
                         )
                )
 
@@ -213,24 +210,24 @@ main =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Laden
+    ( Loading
     , holenVonCsv GotText 0
     )
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
 
 view : Model -> Html Msg
 view model =
     case model of
-        Fehlschlag ->
-            Html.text "Ich konnte Ihre Title nicht öffnen."
+        Error ->
+            Html.text "I cannot open your data."
 
-        Laden ->
-            Html.text "Title werden geöffnet..."
+        Loading ->
+            Html.text "Loading..."
 
-        Erfolg l ->
+        Success l ->
                     let
                         multiDimDaten : List Title -> (Title -> Float) -> (Title -> Float) -> (Title -> Float) -> (Title -> Float) -> (Title -> String) -> String -> String -> String -> String-> MultiDimData
                         multiDimDaten listeTitle a b c d e f g h i=
@@ -238,7 +235,7 @@ view model =
                             [ List.map
                                 (\x ->
                                     [(a x), (b x), (c x), (d x)]
-                                        |> MultiDimPunkt (e x)
+                                        |> MultiDimPoint (e x)
                                 )
                                 listeTitle
                             ]
@@ -247,7 +244,7 @@ view model =
                             List.length l.data
 
                         plotDaten = 
-                            multiDimDaten l.data l.ersteFunktion l.zweiteFunktion l.dritteFunktion l.vierteFunktion .title l.ersterName l.zweiterName l.dritterName l.vierterName       
+                            multiDimDaten l.data l.firstFunction l.secondFunction l.thirdFunction l.fourthFunction .title l.firstName l.secondName l.thirdName l.fourthName       
                     in
                     div []
                         [   h1 []
@@ -322,7 +319,7 @@ view model =
                             ]
                                 
                             , div []
-                                    [ paralleleKoordinatenPlan 600 2 l.cl plotDaten 
+                                    [ parCoord 600 2 l.cl plotDaten 
                                     ] 
                         ]
 
@@ -330,38 +327,38 @@ view model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GotText ergebnis ->
-            case ergebnis of
+        GotText output ->
+            case output of
                 Ok fullText ->
-                    ( Erfolg <| { data = Data.titleListe [ fullText ], ersteFunktion = .runtime, zweiteFunktion = .imdb_score, dritteFunktion = .imdb_votes, vierteFunktion = .tmdb_popularity , ersterName = "Runtime", zweiterName = "IMDb score", dritterName = "IMDb votes", vierterName = "TMDb popularity", cl = 1}, Cmd.none )
+                    ( Success <| { data = Data.titleListe [ fullText ], firstFunction = .runtime, secondFunction = .imdb_score, thirdFunction = .imdb_votes, fourthFunction = .tmdb_popularity , firstName = "Runtime", secondName = "IMDb score", thirdName = "IMDb votes", fourthName = "TMDb popularity", cl = 1}, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
         ChangeAtt1 (x, a) ->
             case model of
-                Erfolg m ->
-                    ( Erfolg <| { data = m.data, ersteFunktion = x, zweiteFunktion = m.zweiteFunktion, dritteFunktion = m.dritteFunktion, vierteFunktion = m.vierteFunktion , ersterName = a, zweiterName = m.zweiterName, dritterName = m.dritterName, vierterName = m.vierterName, cl= m.cl}, Cmd.none )
+                Success m ->
+                    ( Success <| { data = m.data, firstFunction = x, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = a, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl}, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
         ChangeAtt2 (y, a) ->
             case model of
-                Erfolg m ->
-                    ( Erfolg <| { data = m.data, ersteFunktion = m.ersteFunktion, zweiteFunktion = y, dritteFunktion = m.dritteFunktion, vierteFunktion = m.vierteFunktion , ersterName = m.ersterName, zweiterName = a, dritterName = m.dritterName, vierterName = m.vierterName, cl= m.cl}, Cmd.none )
+                Success m ->
+                    ( Success <| { data = m.data, firstFunction = m.firstFunction, secondFunction = y, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = a, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl}, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
         ChangeAtt3 (z, a) ->
             case model of
-                Erfolg m ->
-                    ( Erfolg <| { data = m.data, ersteFunktion = m.ersteFunktion, zweiteFunktion = m.zweiteFunktion, dritteFunktion = z, vierteFunktion = m.vierteFunktion , ersterName = m.ersterName, zweiterName = m.zweiterName, dritterName = a, vierterName = m.vierterName, cl= m.cl}, Cmd.none )
+                Success m ->
+                    ( Success <| { data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = z, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = a, fourthName = m.fourthName, cl= m.cl}, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
         ChangeAtt4 (c, a) ->
             case model of
-                Erfolg m ->
-                    ( Erfolg <| { data = m.data, ersteFunktion = m.ersteFunktion, zweiteFunktion = m.zweiteFunktion, dritteFunktion = m.dritteFunktion, vierteFunktion = c , ersterName = m.ersterName, zweiterName = m.zweiterName, dritterName = m.dritterName, vierterName = a, cl= m.cl}, Cmd.none )
+                Success m ->
+                    ( Success <| { data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = c , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = a, cl= m.cl}, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -369,35 +366,35 @@ update msg model =
             case para of
                 All ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, ersteFunktion = m.ersteFunktion, zweiteFunktion = m.zweiteFunktion, dritteFunktion = m.dritteFunktion, vierteFunktion = m.vierteFunktion , ersterName = m.ersterName, zweiterName = m.zweiterName, dritterName = m.dritterName, vierterName = m.vierterName, cl= m.cl},holenVonCsv GotText 0)
+                        Success m ->
+                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl},holenVonCsv GotText 0)
                         _ ->
                             ( model, Cmd.none )
                    
                 Movies ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, ersteFunktion = m.ersteFunktion, zweiteFunktion = m.zweiteFunktion, dritteFunktion = m.dritteFunktion, vierteFunktion = m.vierteFunktion , ersterName = m.ersterName, zweiterName = m.zweiterName, dritterName = m.dritterName, vierterName = m.vierterName, cl= m.cl},holenVonCsv GotText 1)
+                        Success m ->
+                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl},holenVonCsv GotText 1)
                         _ ->
                             ( model, Cmd.none )
                 Series ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, ersteFunktion = m.ersteFunktion, zweiteFunktion = m.zweiteFunktion, dritteFunktion = m.dritteFunktion, vierteFunktion = m.vierteFunktion , ersterName = m.ersterName, zweiterName = m.zweiterName, dritterName = m.dritterName, vierterName = m.vierterName, cl= m.cl},holenVonCsv GotText 2)
+                        Success m ->
+                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl},holenVonCsv GotText 2)
                         _ ->
                             ( model, Cmd.none )
         ChangeMode color ->
             case color of
                 B -> 
                     case model of 
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, ersteFunktion = m.ersteFunktion, zweiteFunktion = m.zweiteFunktion, dritteFunktion = m.dritteFunktion, vierteFunktion = m.vierteFunktion , ersterName = m.ersterName, zweiterName = m.zweiterName, dritterName = m.dritterName, vierterName = m.vierterName, cl= 0}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= 0}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 W -> 
                     case model of 
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, ersteFunktion = m.ersteFunktion, zweiteFunktion = m.zweiteFunktion, dritteFunktion = m.dritteFunktion, vierteFunktion = m.vierteFunktion , ersterName = m.ersterName, zweiterName = m.zweiterName, dritterName = m.dritterName, vierterName = m.vierterName, cl= 1}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= 1}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
 

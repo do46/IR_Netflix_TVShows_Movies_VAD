@@ -11,13 +11,13 @@ import TypedSvg.Attributes.InPx exposing (cx, cy, r, x, y)
 import TypedSvg.Core exposing (Svg)
 import TypedSvg.Types exposing (AnchorAlignment(..), FontWeight(..), Length(..), Transform(..), px)
 import Browser
-import Html exposing (ul,li)
+import Html 
 import Html.Events exposing (onClick)
 import TypedSvg.Core exposing (Svg, text)
 import List.Extra
 import Html exposing (p)
 import Html exposing (h1)
-import Data exposing (DB(..), Title, defaultExtent, padding, h, w, tickCount, titleListe)
+import Data exposing (DB(..), Title, padding, h, w, tickCount, titleListe)
 import Data exposing (wideExtent)
 
 main : Program () Model Msg
@@ -31,24 +31,24 @@ main =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Laden
-    , holenVonCsv GotText 0
+    ( Loading
+    , getData GotText 0
     )
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
 
 view : Model -> Html Msg
 view model =
     case model of
-        Fehlschlag ->
-            text "Ich konnte Ihre Daten nicht öffnen."
+        Error ->
+            text "I cannot open your data."
 
-        Laden ->
-            text "Daten werden geöffnet..."
+        Loading ->
+            text "Loading ..."
 
-        Erfolg l ->
+        Success l ->
             let
                 filteredTitles =
                     filterAndReduceTitles l.data 
@@ -99,7 +99,7 @@ update msg model =
         GotText result ->
             case result of
                 Ok fullText ->
-                    ( Erfolg <| { data = Data.titleListe [fullText] , att = IMVS }, Cmd.none )
+                    ( Success <| { data = titleListe [fullText] , att = IMVS }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -107,90 +107,90 @@ update msg model =
             case para of
                 All ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data , att = m.att},holenVonCsv GotText 0)
+                        Success m ->
+                            (Success <| {data = m.data , att = m.att},getData GotText 0)
                         _ ->
                             ( model, Cmd.none )
                    
                 Movies ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = m.att},holenVonCsv GotText 1)
+                        Success m ->
+                            (Success <| {data = m.data, att = m.att},getData GotText 1)
                         _ ->
                             ( model, Cmd.none )
                 Series ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = m.att},holenVonCsv GotText 2)
+                        Success m ->
+                            (Success <| {data = m.data, att = m.att},getData GotText 2)
                         _ ->
                             ( model, Cmd.none )
         DropDown str ->
             case str of
                 "a" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = IMVS}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = IMVS}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 "b" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = TMPS}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = TMPS}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 "c" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = IMRS}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = IMRS}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 "d" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = TMRS}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = TMRS}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 "e" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = TMRP}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = TMRP}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 "f" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = TMSS}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = TMSS}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 "g" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = IMSS}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = IMSS}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 "h" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = TMSP}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = TMSP}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 "k" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = TMTP}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = TMTP}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 "i" ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, att = IMTV}, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, att = IMTV}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 _ ->
                     (model, Cmd.none) 
                 
-holenVonCsv : (Result Http.Error String -> Msg) -> Int -> Cmd Msg
-holenVonCsv x db = 
+getData : (Result Http.Error String -> Msg) -> Int -> Cmd Msg
+getData x db = 
     (List.Extra.getAt db Data.liste) |> Maybe.withDefault("titleslesslessdf.csv")|> String.words
         |> List.map
             (\dataset ->
@@ -203,9 +203,9 @@ holenVonCsv x db =
 
 
 type Model
-  = Fehlschlag
-  | Laden
-  | Erfolg 
+  = Error
+  | Loading
+  | Success 
     { data : List Title
     , att : Att  
     }

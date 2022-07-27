@@ -5388,7 +5388,7 @@ var $elm$browser$Browser$element = _Browser_element;
 var $author$project$IconPlot$GotText = function (a) {
 	return {$: 'GotText', a: a};
 };
-var $author$project$IconPlot$Laden = {$: 'Laden'};
+var $author$project$IconPlot$Loading = {$: 'Loading'};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -6216,7 +6216,7 @@ var $elm$core$Maybe$withDefault = F2(
 		}
 	});
 var $elm$core$String$words = _String_words;
-var $author$project$IconPlot$holenVonCsv = F2(
+var $author$project$IconPlot$getData = F2(
 	function (x, db) {
 		return $elm$core$Platform$Cmd$batch(
 			A2(
@@ -6236,16 +6236,16 @@ var $author$project$IconPlot$holenVonCsv = F2(
 	});
 var $author$project$IconPlot$init = function (_v0) {
 	return _Utils_Tuple2(
-		$author$project$IconPlot$Laden,
-		A2($author$project$IconPlot$holenVonCsv, $author$project$IconPlot$GotText, 0));
+		$author$project$IconPlot$Loading,
+		A2($author$project$IconPlot$getData, $author$project$IconPlot$GotText, 0));
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$IconPlot$subscriptions = function (model) {
+var $author$project$IconPlot$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
-var $author$project$IconPlot$Erfolg = function (a) {
-	return {$: 'Erfolg', a: a};
+var $author$project$IconPlot$Success = function (a) {
+	return {$: 'Success', a: a};
 };
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$List$append = F2(
@@ -6747,7 +6747,7 @@ var $author$project$IconPlot$update = F2(
 				if (result.$ === 'Ok') {
 					var fullText = result.a;
 					return _Utils_Tuple2(
-						$author$project$IconPlot$Erfolg(
+						$author$project$IconPlot$Success(
 							{
 								data: $author$project$Data$titleListe(
 									_List_fromArray(
@@ -6762,51 +6762,51 @@ var $author$project$IconPlot$update = F2(
 				var para = msg.a;
 				switch (para.$) {
 					case 'All':
-						if (model.$ === 'Erfolg') {
+						if (model.$ === 'Success') {
 							var m = model.a;
 							return _Utils_Tuple2(
-								$author$project$IconPlot$Erfolg(
+								$author$project$IconPlot$Success(
 									{data: m.data, len: m.len}),
-								A2($author$project$IconPlot$holenVonCsv, $author$project$IconPlot$GotText, 0));
+								A2($author$project$IconPlot$getData, $author$project$IconPlot$GotText, 0));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
 					case 'Movies':
-						if (model.$ === 'Erfolg') {
+						if (model.$ === 'Success') {
 							var m = model.a;
 							return _Utils_Tuple2(
-								$author$project$IconPlot$Erfolg(
+								$author$project$IconPlot$Success(
 									{data: m.data, len: m.len}),
-								A2($author$project$IconPlot$holenVonCsv, $author$project$IconPlot$GotText, 1));
+								A2($author$project$IconPlot$getData, $author$project$IconPlot$GotText, 1));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
 					default:
-						if (model.$ === 'Erfolg') {
+						if (model.$ === 'Success') {
 							var m = model.a;
 							return _Utils_Tuple2(
-								$author$project$IconPlot$Erfolg(
+								$author$project$IconPlot$Success(
 									{data: m.data, len: m.len}),
-								A2($author$project$IconPlot$holenVonCsv, $author$project$IconPlot$GotText, 2));
+								A2($author$project$IconPlot$getData, $author$project$IconPlot$GotText, 2));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
 				}
 			case 'Increment':
-				if (model.$ === 'Erfolg') {
+				if (model.$ === 'Success') {
 					var m = model.a;
 					return _Utils_Tuple2(
-						$author$project$IconPlot$Erfolg(
+						$author$project$IconPlot$Success(
 							{data: m.data, len: m.len + 1}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			default:
-				if (model.$ === 'Erfolg') {
+				if (model.$ === 'Success') {
 					var m = model.a;
 					return _Utils_Tuple2(
-						$author$project$IconPlot$Erfolg(
+						$author$project$IconPlot$Success(
 							{data: m.data, len: m.len - 1}),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -8106,12 +8106,13 @@ var $author$project$IconPlot$stickfigureplot = F2(
 				return 270 - x;
 			},
 			$author$project$IconPlot$inDegree(pValues));
-		var labelPositions = {
-			x: $author$project$Data$wideExtent(xValues).b - 1,
-			y: $author$project$Data$wideExtent(yValues).b
-		};
 		var half = function (t) {
 			return ((t.b - t.a) * 8) / 9;
+		};
+		var labelPositions = {
+			x: half(
+				$author$project$Data$wideExtent(xValues)),
+			y: $author$project$Data$wideExtent(yValues).b
 		};
 		return A2(
 			$elm_community$typed_svg$TypedSvg$svg,
@@ -8220,10 +8221,10 @@ var $author$project$IconPlot$stickfigureplot = F2(
 	});
 var $author$project$IconPlot$view = function (model) {
 	switch (model.$) {
-		case 'Fehlschlag':
-			return $elm_community$typed_svg$TypedSvg$Core$text('Ich konnte Ihre Daten nicht öffnen.');
-		case 'Laden':
-			return $elm_community$typed_svg$TypedSvg$Core$text('Daten werden geöffnet...');
+		case 'Error':
+			return $elm_community$typed_svg$TypedSvg$Core$text('I cannot open the database');
+		case 'Loading':
+			return $elm_community$typed_svg$TypedSvg$Core$text('Loading ...');
 		default:
 			var l = model.a;
 			var numberTitles = $elm$core$List$length(l.data);
@@ -8311,11 +8312,11 @@ var $author$project$IconPlot$view = function (model) {
 								$elm$html$Html$button,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick($author$project$IconPlot$Increment)
+										$elm$html$Html$Events$onClick($author$project$IconPlot$Decrement)
 									]),
 								_List_fromArray(
 									[
-										$elm_community$typed_svg$TypedSvg$Core$text('+1')
+										$elm_community$typed_svg$TypedSvg$Core$text('-')
 									])),
 								$elm_community$typed_svg$TypedSvg$Core$text(
 								' ' + ($elm$core$String$fromFloat(l.len) + ' ')),
@@ -8323,11 +8324,11 @@ var $author$project$IconPlot$view = function (model) {
 								$elm$html$Html$button,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick($author$project$IconPlot$Decrement)
+										$elm$html$Html$Events$onClick($author$project$IconPlot$Increment)
 									]),
 								_List_fromArray(
 									[
-										$elm_community$typed_svg$TypedSvg$Core$text('-1')
+										$elm_community$typed_svg$TypedSvg$Core$text('+')
 									]))
 							])),
 						A2($author$project$IconPlot$stickfigureplot, filteredTitles, l.len)

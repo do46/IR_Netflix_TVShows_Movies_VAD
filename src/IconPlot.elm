@@ -3,17 +3,15 @@ module IconPlot exposing (..)
 import Axis
 import Html exposing (Html)
 import Scale exposing (ContinuousScale)
-import TypedSvg exposing (circle, g, polyline, style, svg, text_)
-import TypedSvg.Attributes as TSA exposing (class, fontFamily, fontSize, textAnchor, transform, viewBox)
-import TypedSvg.Attributes.InPx exposing (cx, cy, height, r, width, x, y)
+import TypedSvg exposing (g, polyline, style, svg, text_)
+import TypedSvg.Attributes as TSA exposing (class, fontSize, textAnchor, transform, viewBox)
+import TypedSvg.Attributes.InPx exposing (x, y)
 import TypedSvg.Core exposing (Svg, text)
 import TypedSvg.Types as TST exposing (AnchorAlignment(..), FontWeight(..), Length(..), Transform(..), px) 
-import Data exposing (DB(..), Title, defaultExtent, padding, h, w, tickCount, titleListe, wideExtent)
-import Color
+import Data exposing (DB(..), Title, padding, h, w, tickCount, titleListe, wideExtent)
 import Browser
 import Html exposing (div, h1, p, button)
 import Html.Events exposing (onClick)
-import Html.Attributes as HA exposing (type_)
 import Http
 import List.Extra
 
@@ -36,24 +34,24 @@ main =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Laden
-    , holenVonCsv GotText 0
+    ( Loading
+    , getData GotText 0
     )
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
 
 view : Model -> Html Msg
 view model =
     case model of
-        Fehlschlag ->
-            text "Ich konnte Ihre Daten nicht öffnen."
+        Error ->
+            text "I cannot open the database"
 
-        Laden ->
-            text "Daten werden geöffnet..."
+        Loading ->
+            text "Loading ..."
 
-        Erfolg l ->
+        Success l ->
             let
                 filteredTitles =
                     filterAndReduceTitles l.data 
@@ -94,9 +92,9 @@ view model =
                         text "Please adjust the size of stick figure:"
                     ]
                     , p []
-                            [ button [ onClick Increment ] [ text "+1" ]
+                            [ button [ onClick Decrement ] [ text "-" ]
                             , text <| " " ++ (String.fromFloat l.len) ++ " "
-                            , button [ onClick Decrement ] [ text "-1" ]
+                            , button [ onClick Increment ] [ text "+" ]
                             ]
                     , stickfigureplot filteredTitles l.len
                     ]
@@ -107,7 +105,7 @@ update msg model =
         GotText result ->
             case result of
                 Ok fullText ->
-                    ( Erfolg <| { data = Data.titleListe [fullText], len = 5 }, Cmd.none )
+                    ( Success <| { data = titleListe [fullText], len = 5 }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -115,39 +113,39 @@ update msg model =
             case para of
                 All ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, len = m.len },holenVonCsv GotText 0)
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len },getData GotText 0)
                         _ ->
                             ( model, Cmd.none )
                    
                 Movies ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, len = m.len },holenVonCsv GotText 1)
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len },getData GotText 1)
                         _ ->
                             ( model, Cmd.none )
                 Series ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, len = m.len },holenVonCsv GotText 2)
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len },getData GotText 2)
                         _ ->
                             ( model, Cmd.none )
         {-- ChangeLen v ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, len = Maybe.withDefault 0 <| String.toFloat v }, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, len = Maybe.withDefault 0 <| String.toFloat v }, Cmd.none)
                         _ ->
                             ( model, Cmd.none ) --}
         Increment ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, len = m.len + 1 }, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len + 1 }, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
         Decrement ->
                     case model of
-                        Erfolg m ->
-                            (Erfolg <| {data = m.data, len = m.len - 1 }, Cmd.none)
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len - 1 }, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                    
@@ -155,8 +153,8 @@ update msg model =
 
                 
 
-holenVonCsv : (Result Http.Error String -> Msg) -> Int -> Cmd Msg
-holenVonCsv x db = 
+getData : (Result Http.Error String -> Msg) -> Int -> Cmd Msg
+getData x db = 
     (List.Extra.getAt db Data.liste) |> Maybe.withDefault("titleslesslessdf.csv")|> String.words
         |> List.map
             (\dataset ->
@@ -169,9 +167,9 @@ holenVonCsv x db =
 
 
 type Model
-  = Fehlschlag
-  | Laden
-  | Erfolg 
+  = Error
+  | Loading
+  | Success 
     { data : List Title
     , len : Float 
     }
@@ -278,7 +276,7 @@ stickfigureplot model len =
 
         labelPositions : { x : Float, y : Float }
         labelPositions =
-            { x = (wideExtent xValues |> Tuple.second) - 1
+            { x = (wideExtent xValues |> half) 
             , y = (wideExtent yValues |> Tuple.second)
             }
    
