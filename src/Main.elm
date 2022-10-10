@@ -1,78 +1,46 @@
-module Main exposing (..)
+module Main exposing (main)
 
-import Browser
-import Html
-import Html.Events exposing (onClick)
-import IconPlot
-import ParallelCoordinates
-import Scatterplot
-import Text
+import Html exposing (..)
+import Html.Attributes as HA exposing (href)
+import Css exposing (..)
 
-
-type alias Model =
-    { 
-     scatterplotModel : Scatterplot.Model
-    , parallelCoordinatesModel : ParallelCoordinates.Model
-    , iconPlotModel : IconPlot.Model
-    , textModel : Text.Model
-    , active : Active
-    }
-
-type Active
-    = Text
-    | Scatterplot
-    | ParallelCoordinates
-    | IconPlot
-
-
-type Msg
-    = TextMsg
-    | ScatterplotMsg Scatterplot.Msg
-    | ParallelCoordinatesMsg ParallelCoordinates.Msg
-    | IconPlotMsg IconPlot.Msg
-    | SwitchView Active
-
-
-main : Program () Model Msg
+main : Html msg
 main =
-    Browser.sandbox
-        { init = init
-        , view = view
-        , update = update
-        }
-
-
-init : Model
-init =
-    Model Scatterplot.init ParallelCoordinates.init IconPlot.init  Text.main Text
-
---
-
-view : Model -> Html.Html Msg
-view model =
-    Html.div []
-        [ Html.button [ onClick (SwitchView Scatterplot) ] [ Html.text "Scatterplot" ]
-        , Html.button [ onClick (SwitchView ParallelCoordinates) ] [ Html.text "Parallel Coordinates" ]
-        , case model.active of
-            Scatterplot ->
-                Html.map ScatterplotMsg (Scatterplot.view model.scatterplotModel)
-
-            ParallelCoordinates ->
-                Html.map ParallelCoordinatesMsg (ParallelCoordinates.view model.parallelCoordinatesModel)
+    Html.div[HA.style "padding" "20px"]
+    [Html.h2[HA.style "fontSize" "30px"] 
+        [ Html.text "Modul Information Retrieval und Visualisierung SS 2022"
         ]
+    , Html.h3[HA.style "fontSize" "20px"] 
+        [ Html.text "Projekt: Netflix TV Shows and Movies"
+        ]
+    , Html.h4[HA.style "fontSize" "20px"] 
+        [ Html.text "von: Viet-Anh Do"
+        ]
+    , Html.p [HA.style "fontSize" "18px"]
+        [ Html.text "Im Rahmen dieses Projektes wird eine Filmdatenbank analysiert und anschließend visualisiert anhands drei unterschiedlichen Visualisierungstechniken."
+        ]
+    , Html.p [HA.style "fontSize" "18px"]
+        [ Html.text "Die Quelldaten sind auf der Webseite Kaggle.com zu finden:"
+        ]
+    , Html.p [HA.style "fontSize" "18px"]
+        [ Html.a[ href "https://www.kaggle.com/datasets/victorsoeiro/netflix-tv-shows-and-movies?select=titles.csv" ] [ Html.text "Kaggle.com"]
+        ]
+    
+    , Html.p [HA.style "fontSize" "18px"]
+        [ Html.text "Klicken die unten stehenden URLs an, um zwischen den drei Visualisierungen zu navigieren."
+        ]
+    , Html.p [HA.style "fontSize" "16px"]
+        [ Html.a[ href "Scatterplot.elm" ] [ Html.text "Scatterplot" ]
+        , Html.br [][]
+        , Html.a [ href "ParallelCoordinates.elm" ] [ Html.text "Parallel Coordinates" ]
+        , Html.br [][]
+        , Html.a [ href "IconPlot.elm" ] [ Html.text "Iconplot" ]
+        ]
+    , Html.p [HA.style "fontSize" "18px"]
+        [ Html.text "Das Projekt befindet sich auch auf:"
+        ]
+    , Html.p [HA.style "fontSize" "18px"]
+        [ Html.a[ href "https://github.com/do46/IR_Netflix_TVShows_Movies_VAD" ] [ Html.text "https://github.com/do46/IR_Netflix_TVShows_Movies_VAD"]
+        ]
+    ]
 
-
-update : Msg -> Model -> Model
-update msg model =
-    case msg of
-        TextMsg ->
-            { model | textModel = Text.String}
-        
-        ScatterplotMsg scatterplotMsg ->
-            { model | scatterplotModel = Scatterplot.update scatterplotMsg model.scatterplotModel }
-
-        ParallelCoordinatesMsg parallelCoordinatesMsg ->
-            { model | parallelCoordinatesModel = ParallelCoordinates.update ParallelCoordinatesMsg model.parallelCoordinatesModel }
-
-        SwitchView newActitve ->
-            { model | active = newActitve }

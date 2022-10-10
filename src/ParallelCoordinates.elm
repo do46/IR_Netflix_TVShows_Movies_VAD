@@ -21,6 +21,7 @@ import Html exposing (p)
 import Html exposing (h1)
 import Color exposing (black, white)
 import Scale
+import Html.Attributes exposing (id, value, href)
 
 type Model
   = Error
@@ -62,8 +63,8 @@ type alias MultiDimData =
 
 
 
-holenVonCsv : (Result Http.Error String -> Msg) -> Int -> Cmd Msg
-holenVonCsv x db = 
+getData : (Result Http.Error String -> Msg) -> Int -> Cmd Msg
+getData x db = 
     (List.Extra.getAt db Data.liste) |> Maybe.withDefault("titleslesslessdf.csv")|> String.words
         |> List.map
             (\datensatz ->
@@ -211,7 +212,7 @@ main =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( Loading
-    , holenVonCsv GotText 0
+    , getData GotText 0
     )
 
 subscriptions : Model -> Sub Msg
@@ -247,7 +248,8 @@ view model =
                             multiDimDaten l.data l.firstFunction l.secondFunction l.thirdFunction l.fourthFunction .title l.firstName l.secondName l.thirdName l.fourthName       
                     in
                     div []
-                        [   h1 []
+                        [   a [ href "Main.elm" ] [ Html.text "Back to homepage" ] 
+                            , h1 []
                             [ text "2. Parallel Coordinates" ]
                             , p []
                                 [ text "Number of titles: "
@@ -367,20 +369,20 @@ update msg model =
                 All ->
                     case model of
                         Success m ->
-                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl},holenVonCsv GotText 0)
+                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl},getData GotText 0)
                         _ ->
                             ( model, Cmd.none )
                    
                 Movies ->
                     case model of
                         Success m ->
-                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl},holenVonCsv GotText 1)
+                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl},getData GotText 1)
                         _ ->
                             ( model, Cmd.none )
                 Series ->
                     case model of
                         Success m ->
-                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl},holenVonCsv GotText 2)
+                            (Success <| {data = m.data, firstFunction = m.firstFunction, secondFunction = m.secondFunction, thirdFunction = m.thirdFunction, fourthFunction = m.fourthFunction , firstName = m.firstName, secondName = m.secondName, thirdName = m.thirdName, fourthName = m.fourthName, cl= m.cl},getData GotText 2)
                         _ ->
                             ( model, Cmd.none )
         ChangeMode color ->

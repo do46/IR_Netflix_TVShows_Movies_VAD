@@ -1,8 +1,8 @@
 module Scatterplot exposing (..)
 
 import Axis
-import Html exposing (Html, button, div, option, select)
-import Html.Attributes exposing (id, value)
+import Html exposing (Html, button, div, option, select, a)
+import Html.Attributes exposing (id, value, href)
 import Http
 import Scale exposing (ContinuousScale)
 import TypedSvg exposing (circle, g, style, svg, text_)
@@ -58,7 +58,8 @@ view model =
 
             in
                 div []
-                    [ h1 []
+                    [ a [ href "Main.elm" ] [ Html.text "Back to homepage" ] 
+                    , h1 []
                     [ text "1. Scatterplot"
                     ]
                     , p []

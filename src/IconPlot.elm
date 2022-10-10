@@ -10,10 +10,11 @@ import TypedSvg.Core exposing (Svg, text)
 import TypedSvg.Types as TST exposing (AnchorAlignment(..), FontWeight(..), Length(..), Transform(..), px) 
 import Data exposing (DB(..), Title, padding, h, w, tickCount, titleListe, wideExtent)
 import Browser
-import Html exposing (div, h1, p, button)
+import Html exposing (div, h1, p, button, ul, a)
 import Html.Events exposing (onClick)
 import Http
 import List.Extra
+import Html.Attributes exposing (id, value, href)
 
 --lange : Float
 --lange = 
@@ -51,17 +52,18 @@ view model =
         Loading ->
             text "Loading ..."
 
-        Success l ->
+        Success ml ->
             let
                 filteredTitles =
-                    filterAndReduceTitles l.data 
+                    filterAndReduceTitles ml.data 
 
                 numberTitles =
-                    List.length l.data
+                    List.length ml.data
 
             in
                 div []
-                    [ h1 []
+                    [ Html.a [ href "Main.elm" ] [ Html.text "Back to homepage" ] 
+                    , h1 []
                     [ text "3. Iconplot"
                     ]
                     , p []
@@ -80,11 +82,11 @@ view model =
                     [ Html.input [ type_ "range"
                             , HA.min "2"
                             , HA.max "15"
-                            , HA.value <| String.fromFloat l.len
+                            , HA.value <| String.fromFloat ml.len
                             , Html.Events.onInput ChangeLen
                             ]
                             []
-                            , text <| String.fromFloat l.len    
+                            , text <| String.fromFloat ml.len    
                     ] 
                     --} -- slider doesn't work well .-.
                     , p [] 
@@ -93,10 +95,11 @@ view model =
                     ]
                     , p []
                             [ button [ onClick Decrement ] [ text "-" ]
-                            , text <| " " ++ (String.fromFloat l.len) ++ " "
+                            , text <| " " ++ (String.fromFloat ml.len) ++ " "
                             , button [ onClick Increment ] [ text "+" ]
                             ]
-                    , stickfigureplot filteredTitles l.len
+                    , stickfigureplot filteredTitles ml.len
+                    , div[][stickfiguretest]
                     ]
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -289,6 +292,8 @@ stickfigureplot model len =
             .line text { display: none; }
             .line:hover polyline { stroke: black; stroke-width:1.5; }
             .line:hover text { display: inline; font-size: small }
+            .text text {vertical-align: middle; display: inline-block; font-size: large; stroke: black}
+            .line1 polyline { stroke: black; fill: rgba(255, 255, 255,0.3); ; stroke-width:2; }
           """ ]
     -- plot x axis    
          , g[ transform [ Translate (60) (390)]]
@@ -332,6 +337,7 @@ stickfigureplot model len =
                 
             )
             -- map data with the defined variables
+         
         ]
 
 andMapl : List a -> List (a -> b) -> List b
@@ -410,3 +416,64 @@ type alias Point =
 type alias XyData =
     {  data : List Point
     }
+
+-- Test --
+a_ = 0
+a = 90-a_
+b_ = 90
+b = 360 - 90 - b_
+c_= 135
+c = 360 - 90 - c_
+d_ = 135
+d = 360 - 90 - d_
+e_ = 90
+
+e = 360 - 90 - e_
+
+l : Float
+l = 30
+
+stickfiguretest : Svg msg
+stickfiguretest =
+    svg [ viewBox 0 0 w h, TSA.width <| TST.Percent 100, TSA.height <| TST.Percent 100 ]
+        [ g
+            [ transform [ Translate (padding - 1) (padding - 1) ]
+            , class ["line1"]
+            ]
+            [ polyline
+                [ TSA.points [ ( l/2*cos(degrees a), l/2*sin(degrees a) ), ( -l/2*cos(degrees a), -l/2*sin(degrees a) ) ]
+                ]
+                []
+            , polyline
+                [ TSA.points [ ( -l/2*cos(degrees a), -l/2*sin(degrees a) ), ( -l/2*cos(degrees a)+l*cos(degrees b), -l/2*sin(degrees a) - l * sin(degrees b) ) ]
+                ]
+                []
+
+            , polyline
+                [ TSA.points [ ( -l/2*cos(degrees a), -l/2*sin(degrees a) ), ( (-l/2)*cos(degrees a) - l*cos(degrees c), (-l/2)*sin(degrees a) - l*sin(degrees c) ) ]
+                ]
+                []
+
+            , polyline
+                [ TSA.points [ ( l/2*cos(degrees a), l/2*sin(degrees a) ), ( (l/2)*cos(degrees a) + l*cos(degrees d), l/2*sin(degrees a)+l*sin(degrees d) ) ]
+                ]
+                []
+            
+            , polyline
+                [ TSA.points [ ( l/2*cos(degrees a), l/2*sin(degrees a) ), ( (l/2)*cos(degrees a) - l*cos(degrees e), l/2*sin(degrees a)+l*sin(degrees e) ) ]
+                ]
+                []
+            
+            ]
+            , text_ [ x 100 , y 20 ,fontSize (px 10) , class["text"]]
+            [text "- body: runtime"]
+            , text_ [ x 100 , y 40 ,fontSize (px 10) , class["text"]]
+            [text "- left hand: TMDb popularity"]
+            , text_ [ x 100 , y 60 ,fontSize (px 10) , class["text"]]
+            [text "- right hand: release year"]
+            , text_ [ x 100 , y 80 ,fontSize (px 10) , class["text"]]
+            [text "- left foot: IMDb votes"]
+            , text_ [ x 100 , y 100 ,fontSize (px 10) , class["text"]]
+            [text "- right foot: number of tags"]
+
+        ]

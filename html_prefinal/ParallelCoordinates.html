@@ -6216,7 +6216,7 @@ var $elm$core$Maybe$withDefault = F2(
 		}
 	});
 var $elm$core$String$words = _String_words;
-var $author$project$ParallelCoordinates$holenVonCsv = F2(
+var $author$project$ParallelCoordinates$getData = F2(
 	function (x, db) {
 		return $elm$core$Platform$Cmd$batch(
 			A2(
@@ -6237,7 +6237,7 @@ var $author$project$ParallelCoordinates$holenVonCsv = F2(
 var $author$project$ParallelCoordinates$init = function (_v0) {
 	return _Utils_Tuple2(
 		$author$project$ParallelCoordinates$Loading,
-		A2($author$project$ParallelCoordinates$holenVonCsv, $author$project$ParallelCoordinates$GotText, 0));
+		A2($author$project$ParallelCoordinates$getData, $author$project$ParallelCoordinates$GotText, 0));
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
@@ -6835,7 +6835,7 @@ var $author$project$ParallelCoordinates$update = F2(
 							return _Utils_Tuple2(
 								$author$project$ParallelCoordinates$Success(
 									{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-								A2($author$project$ParallelCoordinates$holenVonCsv, $author$project$ParallelCoordinates$GotText, 0));
+								A2($author$project$ParallelCoordinates$getData, $author$project$ParallelCoordinates$GotText, 0));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
@@ -6845,7 +6845,7 @@ var $author$project$ParallelCoordinates$update = F2(
 							return _Utils_Tuple2(
 								$author$project$ParallelCoordinates$Success(
 									{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-								A2($author$project$ParallelCoordinates$holenVonCsv, $author$project$ParallelCoordinates$GotText, 1));
+								A2($author$project$ParallelCoordinates$getData, $author$project$ParallelCoordinates$GotText, 1));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
@@ -6855,7 +6855,7 @@ var $author$project$ParallelCoordinates$update = F2(
 							return _Utils_Tuple2(
 								$author$project$ParallelCoordinates$Success(
 									{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-								A2($author$project$ParallelCoordinates$holenVonCsv, $author$project$ParallelCoordinates$GotText, 2));
+								A2($author$project$ParallelCoordinates$getData, $author$project$ParallelCoordinates$GotText, 2));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
@@ -6916,9 +6916,24 @@ var $author$project$ParallelCoordinates$MultiDimPoint = F2(
 	});
 var $author$project$Data$Series = {$: 'Series'};
 var $author$project$ParallelCoordinates$W = {$: 'W'};
+var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -9035,6 +9050,16 @@ var $author$project$ParallelCoordinates$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href('Main.html')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Back to homepage')
+							])),
 						A2(
 						$elm$html$Html$h1,
 						_List_Nil,
