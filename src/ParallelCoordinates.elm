@@ -21,7 +21,7 @@ import Html exposing (p)
 import Html exposing (h1)
 import Color exposing (black, white)
 import Scale
-import Html.Attributes exposing (id, value, href)
+import Html.Attributes exposing (href)
 
 type Model
   = Error
@@ -249,6 +249,11 @@ view model =
                     in
                     div []
                         [   a [ href "Main.elm" ] [ Html.text "Back to homepage" ] 
+                            , Html.br [][]
+                            , Html.a [ href "Scatterplot.elm" ] [ Html.text "Scatterplot" ]
+                            , Html.br [][]
+                            , Html.a [ href "IconPlot.elm" ] [ Html.text "Iconplot" ]
+                            , Html.br [][]
                             , h1 []
                             [ text "2. Parallel Coordinates" ]
                             , p []

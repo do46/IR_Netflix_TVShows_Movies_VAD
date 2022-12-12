@@ -10,11 +10,13 @@ import TypedSvg.Core exposing (Svg, text)
 import TypedSvg.Types as TST exposing (AnchorAlignment(..), FontWeight(..), Length(..), Transform(..), px) 
 import Data exposing (DB(..), Title, padding, h, w, tickCount, titleListe, wideExtent)
 import Browser
-import Html exposing (div, h1, p, button, ul, a)
+import Html exposing (div, h1, p, button, a)
 import Html.Events exposing (onClick)
 import Http
 import List.Extra
-import Html.Attributes exposing (id, value, href)
+import Html.Attributes exposing (href)
+import TypedSvg.Types exposing (Paint(..))
+import Color
 
 --lange : Float
 --lange = 
@@ -63,6 +65,11 @@ view model =
             in
                 div []
                     [ Html.a [ href "Main.elm" ] [ Html.text "Back to homepage" ] 
+                    , Html.br [][]
+                    , Html.a [ href "ParallelCoordinates.elm" ] [ Html.text "Parallel Coordinates" ]
+                    , Html.br [][]
+                    , Html.a [ href "Scatterplot.elm" ] [ Html.text "Scatterplot" ]
+                    , Html.br [][]
                     , h1 []
                     [ text "3. Iconplot"
                     ]
@@ -91,6 +98,18 @@ view model =
                     --} -- slider doesn't work well .-.
                     , p [] 
                     [
+                        text "Please choose a part of stickfigure to be shown:"
+                    ]
+                    , p []
+                        [ button [onClick Body][text "Body"]
+                        , button [onClick LeftFoot][text "Left Foot"]
+                        , button [onClick RightFoot][text "Right Foot"]
+                        , button [onClick LeftHand][text "Left Hand"]
+                        , button [onClick RightHand][text "Right Hand"]
+                        , button [onClick Reset][text "Whole Stickfigure"]
+                        ]
+                    , p [] 
+                    [
                         text "Please adjust the size of stick figure:"
                     ]
                     , p []
@@ -98,7 +117,7 @@ view model =
                             , text <| " " ++ (String.fromFloat ml.len) ++ " "
                             , button [ onClick Increment ] [ text "+" ]
                             ]
-                    , stickfigureplot filteredTitles ml.len
+                    , stickfigureplot filteredTitles ml.len ml.stickcolor
                     , div[][stickfiguretest]
                     ]
 
@@ -108,7 +127,7 @@ update msg model =
         GotText result ->
             case result of
                 Ok fullText ->
-                    ( Success <| { data = titleListe [fullText], len = 5 }, Cmd.none )
+                    ( Success <| { data = titleListe [fullText], len = 5 , stickcolor = "reset"}, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -117,38 +136,74 @@ update msg model =
                 All ->
                     case model of
                         Success m ->
-                            (Success <| {data = m.data, len = m.len },getData GotText 0)
+                            (Success <| {data = m.data, len = m.len , stickcolor = m.stickcolor },getData GotText 0)
                         _ ->
                             ( model, Cmd.none )
                    
                 Movies ->
                     case model of
                         Success m ->
-                            (Success <| {data = m.data, len = m.len },getData GotText 1)
+                            (Success <| {data = m.data, len = m.len, stickcolor = m.stickcolor },getData GotText 1)
                         _ ->
                             ( model, Cmd.none )
                 Series ->
                     case model of
                         Success m ->
-                            (Success <| {data = m.data, len = m.len },getData GotText 2)
+                            (Success <| {data = m.data, len = m.len , stickcolor = m.stickcolor},getData GotText 2)
                         _ ->
                             ( model, Cmd.none )
         {-- ChangeLen v ->
                     case model of
                         Success m ->
-                            (Success <| {data = m.data, len = Maybe.withDefault 0 <| String.toFloat v }, Cmd.none)
+                            (Success <| {data = m.data, len = Maybe.withDefault 0 <| String.toFloat v , stickcolor = m.stickcolor}, Cmd.none)
                         _ ->
                             ( model, Cmd.none ) --}
         Increment ->
                     case model of
                         Success m ->
-                            (Success <| {data = m.data, len = m.len + 1 }, Cmd.none)
+                            (Success <| {data = m.data, len = m.len + 1 , stickcolor = m.stickcolor}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
         Decrement ->
                     case model of
                         Success m ->
-                            (Success <| {data = m.data, len = m.len - 1 }, Cmd.none)
+                            (Success <| {data = m.data, len = m.len - 1 , stickcolor = m.stickcolor}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+        Reset -> 
+                    case model of
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len , stickcolor = "reset"}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+        Body -> 
+                    case model of
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len , stickcolor = "b"}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+        LeftFoot -> 
+                    case model of
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len , stickcolor = "lf"}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+        RightFoot -> 
+                    case model of
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len , stickcolor = "rf"}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+        LeftHand -> 
+                    case model of
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len , stickcolor = "lh"}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+        RightHand -> 
+                    case model of
+                        Success m ->
+                            (Success <| {data = m.data, len = m.len , stickcolor = "rh"}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                    
@@ -174,7 +229,8 @@ type Model
   | Loading
   | Success 
     { data : List Title
-    , len : Float 
+    , len : Float
+    , stickcolor : String
     }
 
 type Msg
@@ -183,6 +239,12 @@ type Msg
     --| ChangeLen (String)
     | Increment
     | Decrement
+    | Reset
+    | Body
+    | LeftFoot
+    | RightFoot
+    | LeftHand
+    | RightHand
 
 filterAndReduceTitles : List Title -> XyData
 filterAndReduceTitles my_titles =
@@ -190,10 +252,10 @@ filterAndReduceTitles my_titles =
 
 pointLabel : String -> Float -> Float -> Float -> Float -> Float -> Float -> Float -> Float -> Point -- xmts
 pointLabel title imdb_score imdb_votes runtime tmdb_popularity tmdb_score seasons release_year numberTags = -- xmts
-    Point (title ++ " (" ++ String.fromFloat imdb_votes ++ ", " ++ String.fromFloat imdb_score
-        ++ String.fromFloat runtime ++ ", " ++ String.fromFloat tmdb_popularity ++ ", " 
-        ++ String.fromFloat tmdb_score ++ ", " ++ String.fromFloat seasons ++ ", "
-        ++ String.fromFloat release_year ++ ", " ++ String.fromFloat numberTags ++ ")") 
+    Point (title ++ " (IMDb Votes: " ++ String.fromFloat imdb_votes ++ ", IMDb score: " ++ String.fromFloat imdb_score
+        ++ ", runtime: "++ String.fromFloat runtime ++ ", TMDb popularity; " ++ String.fromFloat tmdb_popularity 
+        ++ ", TMDb score: " ++ String.fromFloat tmdb_score ++ ", " ++ String.fromFloat seasons ++ ", release year: "
+        ++ String.fromFloat release_year ++ ", number of tags: " ++ String.fromFloat numberTags ++ ")") 
         (imdb_votes) (imdb_score) (runtime) (tmdb_popularity) (tmdb_score) (seasons) (release_year) (numberTags) -- xmts
 
 andMap : Maybe a -> Maybe (a -> b) -> Maybe b
@@ -212,8 +274,8 @@ title2point title =
             |> andMap (Just title.release_year)
             |> andMap (Just title.numberTags)
 
-stickfigureplot : XyData -> Float -> Svg msg
-stickfigureplot model len =
+stickfigureplot : XyData -> Float -> String -> Svg msg
+stickfigureplot model len stickcolor =
  -- funktionen und parameter deklarieren
     let
         
@@ -285,13 +347,13 @@ stickfigureplot model len =
    
     in
     -- output als svg => scatter plot
-    
+    -- .line polyline { stroke: lightGrey ; stroke-width:1; }
     svg [ viewBox 0 0 w h, TSA.width <| TST.Percent 100, TSA.height <| TST.Percent 100 ]
         [ style [] [ TypedSvg.Core.text """
-            .line polyline { stroke: lightGrey; fill: rgba(255, 255, 255,0.3); ; stroke-width:1; }
+            
             .line text { display: none; }
             .line:hover polyline { stroke: black; stroke-width:1.5; }
-            .line:hover text { display: inline; font-size: small }
+            .line:hover text { display: inline; font-size: x-small; }
             .text text {vertical-align: middle; display: inline-block; font-size: large; stroke: black}
             .line1 polyline { stroke: black; fill: rgba(255, 255, 255,0.3); ; stroke-width:2; }
           """ ]
@@ -327,7 +389,7 @@ stickfigureplot model len =
              ]
     -- plot points and description     
          ,g [ transform [ Translate padding padding ] ]
-            (List.map (stickfigure xScaleLocal yScaleLocal len) 
+            (List.map (stickfigure xScaleLocal yScaleLocal len stickcolor) 
                 uDegree 
                 |> andMapl vDegree 
                 |> andMapl pDegree 
@@ -344,8 +406,8 @@ andMapl : List a -> List (a -> b) -> List b
 andMapl = List.map2 (|>)
 
 
-stickfigure : ContinuousScale Float -> ContinuousScale Float -> Float -> Float -> Float -> Float -> Float -> Float -> Point -> Svg msg
-stickfigure scaleX scaleY lange uDegree vDegree pDegree qDegree zDegree xyPoint  =
+stickfigure : ContinuousScale Float -> ContinuousScale Float -> Float -> String -> Float -> Float -> Float -> Float -> Float -> Point -> Svg msg
+stickfigure scaleX scaleY lange stick uDegree vDegree pDegree qDegree zDegree xyPoint =
         g [ class [ "line"] ]
           [
             g  
@@ -362,32 +424,32 @@ stickfigure scaleX scaleY lange uDegree vDegree pDegree qDegree zDegree xyPoint 
                 ]
                 
                 [ polyline
-                        [ TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), ( -lange/2*cos(degrees uDegree), -lange/2*sin(degrees uDegree)) ]
-                        ]
-                        []
+                        [ TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), 
+                        ( -lange/2*cos(degrees uDegree), -lange/2*sin(degrees uDegree)) ]
+                        , TSA.stroke <| Paint <| (if stick == "b" then Color.red else if stick == "reset" then Color.lightGrey else Color.rgba 0.0 0.0 0.0 0.0)
+                        ][]-- body, runtime
                 , polyline
-                        [ TSA.points [ ( (-lange/2)*cos(degrees uDegree), (-lange/2)*sin(degrees uDegree) ), ( (-lange/2)*cos(degrees uDegree) + lange*cos(degrees vDegree), -lange/2*sin(degrees uDegree) - lange*sin(degrees vDegree) ) ]
-                        ]
-                        []
-
+                        [ TSA.points [ ( (-lange/2)*cos(degrees uDegree), (-lange/2)*sin(degrees uDegree) ), 
+                        ( (-lange/2)*cos(degrees uDegree) + lange*cos(degrees vDegree), -lange/2*sin(degrees uDegree) - lange*sin(degrees vDegree) ) ]
+                        , TSA.stroke <| Paint <| (if stick == "lf" then Color.red else if stick == "reset" then Color.lightGrey else Color.rgba 0.0 0.0 0.0 0.0)
+                        ][] -- left foot, TMDb Pop
                 , polyline
-                        [ TSA.points [ ( (-lange/2)*cos(degrees uDegree), (-lange/2)*sin(degrees uDegree) ), ( -lange/2*cos(degrees uDegree) - lange*cos(degrees pDegree), -lange/2*sin(degrees uDegree) - lange*sin(degrees pDegree) ) ]
-                        ]
-                        []
-
+                        [ TSA.points [ ( (-lange/2)*cos(degrees uDegree), (-lange/2)*sin(degrees uDegree) ), 
+                        ( -lange/2*cos(degrees uDegree) - lange*cos(degrees pDegree), -lange/2*sin(degrees uDegree) - lange*sin(degrees pDegree) ) ]
+                        , TSA.stroke <| Paint <| (if stick == "rf" then Color.red else if stick == "reset" then Color.lightGrey else Color.rgba 0.0 0.0 0.0 0.0)
+                        ][] -- right foot, release year
                 , polyline
-                        [ TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), ( lange/2*cos(degrees uDegree) + lange*cos(degrees qDegree), lange/2*sin(degrees uDegree) + lange*sin(degrees qDegree) ) ]
-                        ]
-                        []
-                    
+                        [ TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), 
+                        ( lange/2*cos(degrees uDegree) + lange*cos(degrees qDegree), lange/2*sin(degrees uDegree) + lange*sin(degrees qDegree) ) ]
+                        , TSA.stroke <| Paint <| (if stick == "lh" then Color.red else if stick == "reset" then Color.lightGrey else Color.rgba 0.0 0.0 0.0 0.0)
+                        ][] -- left hand, IMDb votes
                 , polyline
-                        [ TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), ( lange/2*cos(degrees uDegree) - lange*cos(degrees zDegree), lange/2*sin(degrees uDegree) + lange*sin(degrees zDegree) ) ]
-                        ]
-                        []
+                        [ TSA.points [ ( lange/2*cos(degrees uDegree), lange/2*sin(degrees uDegree) ), 
+                        ( lange/2*cos(degrees uDegree) - lange*cos(degrees zDegree), lange/2*sin(degrees uDegree) + lange*sin(degrees zDegree) ) ]
+                        , TSA.stroke <| Paint <| (if stick == "rh" then Color.red else if stick == "reset" then Color.lightGrey else Color.rgba 0.0 0.0 0.0 0.0)
+                        ][] -- right hand, number of tags
                 ]
           ]
-
-
 
  
 -- shift the scale
@@ -468,12 +530,12 @@ stickfiguretest =
             , text_ [ x 100 , y 20 ,fontSize (px 10) , class["text"]]
             [text "- body: runtime"]
             , text_ [ x 100 , y 40 ,fontSize (px 10) , class["text"]]
-            [text "- left hand: TMDb popularity"]
+            [text "- left hand: IMDb votes"]
             , text_ [ x 100 , y 60 ,fontSize (px 10) , class["text"]]
-            [text "- right hand: release year"]
+            [text "- right hand: number of tags"]
             , text_ [ x 100 , y 80 ,fontSize (px 10) , class["text"]]
-            [text "- left foot: IMDb votes"]
+            [text "- left foot: TMDb popularity"]
             , text_ [ x 100 , y 100 ,fontSize (px 10) , class["text"]]
-            [text "- right foot: number of tags"]
+            [text "- right foot: release year"]
 
         ]

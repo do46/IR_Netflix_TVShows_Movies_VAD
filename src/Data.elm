@@ -1,4 +1,4 @@
-module Data exposing (Title, DB(..), w, h, padding, tickCount, defaultExtent, titleListe, wideExtent, liste)
+module Data exposing (Title, DB(..), w, h, padding, tickCount, defaultExtent, titleListe, wideExtent, liste, radius)
 
 import Csv
 import Csv.Decode

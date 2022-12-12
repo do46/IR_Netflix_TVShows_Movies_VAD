@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>ParallelCoordinates</title>
+  <title>Scatterplot</title>
   <style>body { padding: 0; margin: 0; }</style>
 </head>
 
@@ -5385,10 +5385,10 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$ParallelCoordinates$GotText = function (a) {
+var $author$project$Scatterplot$GotText = function (a) {
 	return {$: 'GotText', a: a};
 };
-var $author$project$ParallelCoordinates$Loading = {$: 'Loading'};
+var $author$project$Scatterplot$Loading = {$: 'Loading'};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -6216,16 +6216,16 @@ var $elm$core$Maybe$withDefault = F2(
 		}
 	});
 var $elm$core$String$words = _String_words;
-var $author$project$ParallelCoordinates$getData = F2(
+var $author$project$Scatterplot$getData = F2(
 	function (x, db) {
 		return $elm$core$Platform$Cmd$batch(
 			A2(
 				$elm$core$List$map,
-				function (datensatz) {
+				function (dataset) {
 					return $elm$http$Http$get(
 						{
 							expect: $elm$http$Http$expectString(x),
-							url: 'https://raw.githubusercontent.com/do46/IR_Netflix_TVShows_Movies_VAD/main/Data/AufbereiteteDaten/' + datensatz
+							url: 'https://raw.githubusercontent.com/do46/IR_Netflix_TVShows_Movies_VAD/main/Data/AufbereiteteDaten/' + dataset
 						});
 				},
 				$elm$core$String$words(
@@ -6234,19 +6234,31 @@ var $author$project$ParallelCoordinates$getData = F2(
 						'titleslesslessdf.csv',
 						A2($elm_community$list_extra$List$Extra$getAt, db, $author$project$Data$liste)))));
 	});
-var $author$project$ParallelCoordinates$init = function (_v0) {
+var $author$project$Scatterplot$init = function (_v0) {
 	return _Utils_Tuple2(
-		$author$project$ParallelCoordinates$Loading,
-		A2($author$project$ParallelCoordinates$getData, $author$project$ParallelCoordinates$GotText, 0));
+		$author$project$Scatterplot$Loading,
+		A2($author$project$Scatterplot$getData, $author$project$Scatterplot$GotText, 0));
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$ParallelCoordinates$subscriptions = function (_v0) {
+var $author$project$Scatterplot$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
-var $author$project$ParallelCoordinates$Success = function (a) {
+var $author$project$Scatterplot$IMRS = {$: 'IMRS'};
+var $author$project$Scatterplot$IMRY = {$: 'IMRY'};
+var $author$project$Scatterplot$IMSS = {$: 'IMSS'};
+var $author$project$Scatterplot$IMTV = {$: 'IMTV'};
+var $author$project$Scatterplot$IMVS = {$: 'IMVS'};
+var $author$project$Scatterplot$Success = function (a) {
 	return {$: 'Success', a: a};
 };
+var $author$project$Scatterplot$TMPS = {$: 'TMPS'};
+var $author$project$Scatterplot$TMRP = {$: 'TMRP'};
+var $author$project$Scatterplot$TMRS = {$: 'TMRS'};
+var $author$project$Scatterplot$TMRY = {$: 'TMRY'};
+var $author$project$Scatterplot$TMSP = {$: 'TMSP'};
+var $author$project$Scatterplot$TMSS = {$: 'TMSS'};
+var $author$project$Scatterplot$TMTP = {$: 'TMTP'};
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$List$append = F2(
 	function (xs, ys) {
@@ -6739,89 +6751,21 @@ var $author$project$Data$titleListe = function (liste1) {
 			},
 			liste1));
 };
-var $author$project$ParallelCoordinates$update = F2(
+var $author$project$Scatterplot$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'GotText':
-				var output = msg.a;
-				if (output.$ === 'Ok') {
-					var fullText = output.a;
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var fullText = result.a;
 					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Success(
+						$author$project$Scatterplot$Success(
 							{
-								cl: 1,
+								att: $author$project$Scatterplot$IMVS,
 								data: $author$project$Data$titleListe(
 									_List_fromArray(
-										[fullText])),
-								firstFunction: function ($) {
-									return $.runtime;
-								},
-								firstName: 'Runtime',
-								fourthFunction: function ($) {
-									return $.tmdb_popularity;
-								},
-								fourthName: 'TMDb popularity',
-								secondFunction: function ($) {
-									return $.imdb_score;
-								},
-								secondName: 'IMDb score',
-								thirdFunction: function ($) {
-									return $.imdb_votes;
-								},
-								thirdName: 'IMDb votes'
+										[fullText]))
 							}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-			case 'ChangeAtt1':
-				var _v2 = msg.a;
-				var x = _v2.a;
-				var a = _v2.b;
-				if (model.$ === 'Success') {
-					var m = model.a;
-					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Success(
-							{cl: m.cl, data: m.data, firstFunction: x, firstName: a, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-			case 'ChangeAtt2':
-				var _v4 = msg.a;
-				var y = _v4.a;
-				var a = _v4.b;
-				if (model.$ === 'Success') {
-					var m = model.a;
-					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Success(
-							{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: y, secondName: a, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-			case 'ChangeAtt3':
-				var _v6 = msg.a;
-				var z = _v6.a;
-				var a = _v6.b;
-				if (model.$ === 'Success') {
-					var m = model.a;
-					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Success(
-							{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: z, thirdName: a}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-			case 'ChangeAtt4':
-				var _v8 = msg.a;
-				var c = _v8.a;
-				var a = _v8.b;
-				if (model.$ === 'Success') {
-					var m = model.a;
-					return _Utils_Tuple2(
-						$author$project$ParallelCoordinates$Success(
-							{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: c, fourthName: a, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -6833,9 +6777,9 @@ var $author$project$ParallelCoordinates$update = F2(
 						if (model.$ === 'Success') {
 							var m = model.a;
 							return _Utils_Tuple2(
-								$author$project$ParallelCoordinates$Success(
-									{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-								A2($author$project$ParallelCoordinates$getData, $author$project$ParallelCoordinates$GotText, 0));
+								$author$project$Scatterplot$Success(
+									{att: m.att, data: m.data}),
+								A2($author$project$Scatterplot$getData, $author$project$Scatterplot$GotText, 0));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
@@ -6843,9 +6787,9 @@ var $author$project$ParallelCoordinates$update = F2(
 						if (model.$ === 'Success') {
 							var m = model.a;
 							return _Utils_Tuple2(
-								$author$project$ParallelCoordinates$Success(
-									{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-								A2($author$project$ParallelCoordinates$getData, $author$project$ParallelCoordinates$GotText, 1));
+								$author$project$Scatterplot$Success(
+									{att: m.att, data: m.data}),
+								A2($author$project$Scatterplot$getData, $author$project$Scatterplot$GotText, 1));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
@@ -6853,72 +6797,236 @@ var $author$project$ParallelCoordinates$update = F2(
 						if (model.$ === 'Success') {
 							var m = model.a;
 							return _Utils_Tuple2(
-								$author$project$ParallelCoordinates$Success(
-									{cl: m.cl, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-								A2($author$project$ParallelCoordinates$getData, $author$project$ParallelCoordinates$GotText, 2));
+								$author$project$Scatterplot$Success(
+									{att: m.att, data: m.data}),
+								A2($author$project$Scatterplot$getData, $author$project$Scatterplot$GotText, 2));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
 				}
 			default:
-				var color = msg.a;
-				if (color.$ === 'B') {
-					if (model.$ === 'Success') {
-						var m = model.a;
-						return _Utils_Tuple2(
-							$author$project$ParallelCoordinates$Success(
-								{cl: 0, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-							$elm$core$Platform$Cmd$none);
-					} else {
+				var str = msg.a;
+				switch (str) {
+					case 'a':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$IMVS, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'b':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$TMPS, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'c':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$IMRS, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'd':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$TMRS, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'e':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$TMRP, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'f':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$TMSS, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'g':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$IMSS, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'h':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$TMSP, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'i':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$TMTP, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'j':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$IMTV, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'k':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$IMRY, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					case 'l':
+						if (model.$ === 'Success') {
+							var m = model.a;
+							return _Utils_Tuple2(
+								$author$project$Scatterplot$Success(
+									{att: $author$project$Scatterplot$TMRY, data: m.data}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					default:
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-					}
-				} else {
-					if (model.$ === 'Success') {
-						var m = model.a;
-						return _Utils_Tuple2(
-							$author$project$ParallelCoordinates$Success(
-								{cl: 1, data: m.data, firstFunction: m.firstFunction, firstName: m.firstName, fourthFunction: m.fourthFunction, fourthName: m.fourthName, secondFunction: m.secondFunction, secondName: m.secondName, thirdFunction: m.thirdFunction, thirdName: m.thirdName}),
-							$elm$core$Platform$Cmd$none);
-					} else {
-						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-					}
 				}
 		}
 	});
 var $author$project$Data$All = {$: 'All'};
-var $author$project$ParallelCoordinates$B = {$: 'B'};
-var $author$project$ParallelCoordinates$ChangeAtt1 = function (a) {
-	return {$: 'ChangeAtt1', a: a};
-};
-var $author$project$ParallelCoordinates$ChangeAtt2 = function (a) {
-	return {$: 'ChangeAtt2', a: a};
-};
-var $author$project$ParallelCoordinates$ChangeAtt3 = function (a) {
-	return {$: 'ChangeAtt3', a: a};
-};
-var $author$project$ParallelCoordinates$ChangeAtt4 = function (a) {
-	return {$: 'ChangeAtt4', a: a};
-};
-var $author$project$ParallelCoordinates$ChangeDB = function (a) {
+var $author$project$Scatterplot$ChangeDB = function (a) {
 	return {$: 'ChangeDB', a: a};
 };
-var $author$project$ParallelCoordinates$ChangeMode = function (a) {
-	return {$: 'ChangeMode', a: a};
+var $author$project$Scatterplot$DropDown = function (a) {
+	return {$: 'DropDown', a: a};
 };
 var $author$project$Data$Movies = {$: 'Movies'};
-var $author$project$ParallelCoordinates$MultiDimData = F2(
-	function (dimDescription, data) {
-		return {data: data, dimDescription: dimDescription};
-	});
-var $author$project$ParallelCoordinates$MultiDimPoint = F2(
-	function (pointName, value) {
-		return {pointName: pointName, value: value};
-	});
 var $author$project$Data$Series = {$: 'Series'};
-var $author$project$ParallelCoordinates$W = {$: 'W'};
 var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $author$project$Scatterplot$XyData = function (data) {
+	return {data: data};
+};
+var $elm$core$Maybe$map2 = F3(
+	function (func, ma, mb) {
+		if (ma.$ === 'Nothing') {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			var a = ma.a;
+			if (mb.$ === 'Nothing') {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var b = mb.a;
+				return $elm$core$Maybe$Just(
+					A2(func, a, b));
+			}
+		}
+	});
+var $author$project$Scatterplot$andMap = $elm$core$Maybe$map2($elm$core$Basics$apR);
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Scatterplot$Point = F9(
+	function (pointName, x, y, z, a, b, c, d, e) {
+		return {a: a, b: b, c: c, d: d, e: e, pointName: pointName, x: x, y: y, z: z};
+	});
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $author$project$Scatterplot$pointLabel = F9(
+	function (title, imdb_score, imdb_votes, runtime, tmdb_popularity, tmdb_score, seasons, release_year, numberTags) {
+		return A9(
+			$author$project$Scatterplot$Point,
+			title + (' (IMDb Votes: ' + ($elm$core$String$fromFloat(imdb_votes) + (', IMDb score: ' + ($elm$core$String$fromFloat(imdb_score) + (', runtime: ' + ($elm$core$String$fromFloat(runtime) + (', TMDb popularity; ' + ($elm$core$String$fromFloat(tmdb_popularity) + (', TMDb score: ' + ($elm$core$String$fromFloat(tmdb_score) + (', ' + ($elm$core$String$fromFloat(seasons) + (', release year: ' + ($elm$core$String$fromFloat(release_year) + (', number of tags: ' + ($elm$core$String$fromFloat(numberTags) + ')')))))))))))))))),
+			imdb_votes,
+			imdb_score,
+			runtime,
+			tmdb_popularity,
+			tmdb_score,
+			seasons,
+			release_year,
+			numberTags);
+	});
+var $author$project$Scatterplot$title2point = function (title) {
+	return A2(
+		$author$project$Scatterplot$andMap,
+		$elm$core$Maybe$Just(title.numberTags),
+		A2(
+			$author$project$Scatterplot$andMap,
+			$elm$core$Maybe$Just(title.release_year),
+			A2(
+				$author$project$Scatterplot$andMap,
+				$elm$core$Maybe$Just(title.seasons),
+				A2(
+					$author$project$Scatterplot$andMap,
+					$elm$core$Maybe$Just(title.tmdb_score),
+					A2(
+						$author$project$Scatterplot$andMap,
+						$elm$core$Maybe$Just(title.tmdb_popularity),
+						A2(
+							$author$project$Scatterplot$andMap,
+							$elm$core$Maybe$Just(title.runtime),
+							A2(
+								$author$project$Scatterplot$andMap,
+								$elm$core$Maybe$Just(title.imdb_votes),
+								A2(
+									$author$project$Scatterplot$andMap,
+									$elm$core$Maybe$Just(title.imdb_score),
+									A2(
+										$elm$core$Maybe$map,
+										$author$project$Scatterplot$pointLabel,
+										$elm$core$Maybe$Just(title.title))))))))));
+};
+var $author$project$Scatterplot$filterAndReduceTitles = function (my_titles) {
+	return $author$project$Scatterplot$XyData(
+		A2($elm$core$List$filterMap, $author$project$Scatterplot$title2point, my_titles));
+};
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
@@ -6934,6 +7042,7 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6951,30 +7060,93 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $elm$html$Html$p = _VirtualDom_node('p');
-var $elm_community$typed_svg$TypedSvg$Types$AnchorMiddle = {$: 'AnchorMiddle'};
-var $elm_community$typed_svg$TypedSvg$Types$Paint = function (a) {
-	return {$: 'Paint', a: a};
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
 };
-var $elm_community$typed_svg$TypedSvg$Types$PaintNone = {$: 'PaintNone'};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm_community$typed_svg$TypedSvg$Types$Percent = function (a) {
 	return {$: 'Percent', a: a};
-};
-var $elm_community$typed_svg$TypedSvg$Types$Px = function (a) {
-	return {$: 'Px', a: a};
 };
 var $elm_community$typed_svg$TypedSvg$Types$Translate = F2(
 	function (a, b) {
 		return {$: 'Translate', a: a, b: b};
 	});
-var $avh4$elm_color$Color$RgbaSpace = F4(
-	function (a, b, c, d) {
-		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+var $author$project$Scatterplot$attToString = function (att) {
+	switch (att.$) {
+		case 'IMVS':
+			return _List_fromArray(
+				['IMDb votes', 'IMDb score']);
+		case 'TMPS':
+			return _List_fromArray(
+				['TMDb popularity', 'TMDb score']);
+		case 'IMRS':
+			return _List_fromArray(
+				['Runtime', 'IMDb score']);
+		case 'TMRS':
+			return _List_fromArray(
+				['Runtime', 'TMDb score']);
+		case 'TMRP':
+			return _List_fromArray(
+				['Runtime', 'TMDb popularity']);
+		case 'TMSS':
+			return _List_fromArray(
+				['Seasons', 'TMDb score']);
+		case 'IMSS':
+			return _List_fromArray(
+				['Seasons', 'IMDb score']);
+		case 'TMSP':
+			return _List_fromArray(
+				['Seasons', 'TMDb popularity']);
+		case 'TMTP':
+			return _List_fromArray(
+				['Number of Tags', 'TMDb popularity']);
+		case 'IMTV':
+			return _List_fromArray(
+				['Number of Tags', 'IMDb votes']);
+		case 'IMRY':
+			return _List_fromArray(
+				['Release Year', 'IMDb score']);
+		default:
+			return _List_fromArray(
+				['Release Year', 'TMDb score']);
+	}
+};
+var $gampleman$elm_visualization$Scale$convert = F2(
+	function (_v0, value) {
+		var scale = _v0.a;
+		return A3(scale.convert, scale.domain, scale.range, value);
 	});
-var $avh4$elm_color$Color$black = A4($avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
-var $avh4$elm_color$Color$white = A4($avh4$elm_color$Color$RgbaSpace, 255 / 255, 255 / 255, 255 / 255, 1.0);
-var $author$project$ParallelCoordinates$bgrc = _List_fromArray(
-	[$avh4$elm_color$Color$black, $avh4$elm_color$Color$white]);
 var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(
@@ -6983,858 +7155,6 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var $elm_community$typed_svg$TypedSvg$Core$attribute = $elm$virtual_dom$VirtualDom$attribute;
-var $elm_community$typed_svg$TypedSvg$Attributes$class = function (names) {
-	return A2(
-		$elm_community$typed_svg$TypedSvg$Core$attribute,
-		'class',
-		A2($elm$core$String$join, ' ', names));
-};
-var $elm$core$String$concat = function (strings) {
-	return A2($elm$core$String$join, '', strings);
-};
-var $gampleman$elm_visualization$Scale$convert = F2(
-	function (_v0, value) {
-		var scale = _v0.a;
-		return A3(scale.convert, scale.domain, scale.range, value);
-	});
-var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
-var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
-var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
-var $folkertdev$one_true_path_experiment$SubPath$Empty = {$: 'Empty'};
-var $folkertdev$one_true_path_experiment$SubPath$SubPath = function (a) {
-	return {$: 'SubPath', a: a};
-};
-var $folkertdev$elm_deque$Deque$Deque = function (a) {
-	return {$: 'Deque', a: a};
-};
-var $folkertdev$elm_deque$Internal$empty = {front: _List_Nil, rear: _List_Nil, sizeF: 0, sizeR: 0};
-var $folkertdev$elm_deque$Deque$empty = $folkertdev$elm_deque$Deque$Deque($folkertdev$elm_deque$Internal$empty);
-var $elm$core$List$takeReverse = F3(
-	function (n, list, kept) {
-		takeReverse:
-		while (true) {
-			if (n <= 0) {
-				return kept;
-			} else {
-				if (!list.b) {
-					return kept;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs,
-						$temp$kept = A2($elm$core$List$cons, x, kept);
-					n = $temp$n;
-					list = $temp$list;
-					kept = $temp$kept;
-					continue takeReverse;
-				}
-			}
-		}
-	});
-var $elm$core$List$takeTailRec = F2(
-	function (n, list) {
-		return $elm$core$List$reverse(
-			A3($elm$core$List$takeReverse, n, list, _List_Nil));
-	});
-var $elm$core$List$takeFast = F3(
-	function (ctr, n, list) {
-		if (n <= 0) {
-			return _List_Nil;
-		} else {
-			var _v0 = _Utils_Tuple2(n, list);
-			_v0$1:
-			while (true) {
-				_v0$5:
-				while (true) {
-					if (!_v0.b.b) {
-						return list;
-					} else {
-						if (_v0.b.b.b) {
-							switch (_v0.a) {
-								case 1:
-									break _v0$1;
-								case 2:
-									var _v2 = _v0.b;
-									var x = _v2.a;
-									var _v3 = _v2.b;
-									var y = _v3.a;
-									return _List_fromArray(
-										[x, y]);
-								case 3:
-									if (_v0.b.b.b.b) {
-										var _v4 = _v0.b;
-										var x = _v4.a;
-										var _v5 = _v4.b;
-										var y = _v5.a;
-										var _v6 = _v5.b;
-										var z = _v6.a;
-										return _List_fromArray(
-											[x, y, z]);
-									} else {
-										break _v0$5;
-									}
-								default:
-									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
-										var _v7 = _v0.b;
-										var x = _v7.a;
-										var _v8 = _v7.b;
-										var y = _v8.a;
-										var _v9 = _v8.b;
-										var z = _v9.a;
-										var _v10 = _v9.b;
-										var w = _v10.a;
-										var tl = _v10.b;
-										return (ctr > 1000) ? A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
-									} else {
-										break _v0$5;
-									}
-							}
-						} else {
-							if (_v0.a === 1) {
-								break _v0$1;
-							} else {
-								break _v0$5;
-							}
-						}
-					}
-				}
-				return list;
-			}
-			var _v1 = _v0.b;
-			var x = _v1.a;
-			return _List_fromArray(
-				[x]);
-		}
-	});
-var $elm$core$List$take = F2(
-	function (n, list) {
-		return A3($elm$core$List$takeFast, 0, n, list);
-	});
-var $folkertdev$elm_deque$Internal$rebalance = function (deque) {
-	var sizeF = deque.sizeF;
-	var sizeR = deque.sizeR;
-	var front = deque.front;
-	var rear = deque.rear;
-	var size1 = ((sizeF + sizeR) / 2) | 0;
-	var size2 = (sizeF + sizeR) - size1;
-	var balanceConstant = 4;
-	if ((sizeF + sizeR) < 2) {
-		return deque;
-	} else {
-		if (_Utils_cmp(sizeF, (balanceConstant * sizeR) + 1) > 0) {
-			var newRear = _Utils_ap(
-				rear,
-				$elm$core$List$reverse(
-					A2($elm$core$List$drop, size1, front)));
-			var newFront = A2($elm$core$List$take, size1, front);
-			return {front: newFront, rear: newRear, sizeF: size1, sizeR: size2};
-		} else {
-			if (_Utils_cmp(sizeR, (balanceConstant * sizeF) + 1) > 0) {
-				var newRear = A2($elm$core$List$take, size1, rear);
-				var newFront = _Utils_ap(
-					front,
-					$elm$core$List$reverse(
-						A2($elm$core$List$drop, size1, rear)));
-				return {front: newFront, rear: newRear, sizeF: size1, sizeR: size2};
-			} else {
-				return deque;
-			}
-		}
-	}
-};
-var $folkertdev$elm_deque$Internal$fromList = function (list) {
-	return $folkertdev$elm_deque$Internal$rebalance(
-		{
-			front: list,
-			rear: _List_Nil,
-			sizeF: $elm$core$List$length(list),
-			sizeR: 0
-		});
-};
-var $folkertdev$elm_deque$Deque$fromList = A2($elm$core$Basics$composeL, $folkertdev$elm_deque$Deque$Deque, $folkertdev$elm_deque$Internal$fromList);
-var $folkertdev$one_true_path_experiment$LowLevel$Command$ClosePath = {$: 'ClosePath'};
-var $folkertdev$one_true_path_experiment$LowLevel$Command$CurveTo = function (a) {
-	return {$: 'CurveTo', a: a};
-};
-var $folkertdev$one_true_path_experiment$LowLevel$Command$EllipticalArc = function (a) {
-	return {$: 'EllipticalArc', a: a};
-};
-var $folkertdev$one_true_path_experiment$LowLevel$Command$LineTo = function (a) {
-	return {$: 'LineTo', a: a};
-};
-var $folkertdev$one_true_path_experiment$LowLevel$Command$QuadraticBezierCurveTo = function (a) {
-	return {$: 'QuadraticBezierCurveTo', a: a};
-};
-var $folkertdev$one_true_path_experiment$LowLevel$Command$merge = F2(
-	function (instruction1, instruction2) {
-		var _v0 = _Utils_Tuple2(instruction1, instruction2);
-		_v0$5:
-		while (true) {
-			switch (_v0.a.$) {
-				case 'LineTo':
-					if (_v0.b.$ === 'LineTo') {
-						var p1 = _v0.a.a;
-						var p2 = _v0.b.a;
-						return $elm$core$Result$Ok(
-							$folkertdev$one_true_path_experiment$LowLevel$Command$LineTo(
-								_Utils_ap(p1, p2)));
-					} else {
-						break _v0$5;
-					}
-				case 'CurveTo':
-					if (_v0.b.$ === 'CurveTo') {
-						var p1 = _v0.a.a;
-						var p2 = _v0.b.a;
-						return $elm$core$Result$Ok(
-							$folkertdev$one_true_path_experiment$LowLevel$Command$CurveTo(
-								_Utils_ap(p1, p2)));
-					} else {
-						break _v0$5;
-					}
-				case 'QuadraticBezierCurveTo':
-					if (_v0.b.$ === 'QuadraticBezierCurveTo') {
-						var p1 = _v0.a.a;
-						var p2 = _v0.b.a;
-						return $elm$core$Result$Ok(
-							$folkertdev$one_true_path_experiment$LowLevel$Command$QuadraticBezierCurveTo(
-								_Utils_ap(p1, p2)));
-					} else {
-						break _v0$5;
-					}
-				case 'EllipticalArc':
-					if (_v0.b.$ === 'EllipticalArc') {
-						var p1 = _v0.a.a;
-						var p2 = _v0.b.a;
-						return $elm$core$Result$Ok(
-							$folkertdev$one_true_path_experiment$LowLevel$Command$EllipticalArc(
-								_Utils_ap(p1, p2)));
-					} else {
-						break _v0$5;
-					}
-				default:
-					if (_v0.b.$ === 'ClosePath') {
-						var _v1 = _v0.a;
-						var _v2 = _v0.b;
-						return $elm$core$Result$Ok($folkertdev$one_true_path_experiment$LowLevel$Command$ClosePath);
-					} else {
-						break _v0$5;
-					}
-			}
-		}
-		return $elm$core$Result$Err(
-			_Utils_Tuple2(instruction1, instruction2));
-	});
-var $folkertdev$elm_deque$Internal$toList = function (deque) {
-	return _Utils_ap(
-		deque.front,
-		$elm$core$List$reverse(deque.rear));
-};
-var $folkertdev$elm_deque$Deque$unwrap = function (_v0) {
-	var boundedDeque = _v0.a;
-	return boundedDeque;
-};
-var $folkertdev$elm_deque$Deque$toList = A2($elm$core$Basics$composeL, $folkertdev$elm_deque$Internal$toList, $folkertdev$elm_deque$Deque$unwrap);
-var $folkertdev$one_true_path_experiment$SubPath$compressHelper = function (drawtos) {
-	var folder = F2(
-		function (instruction, _v3) {
-			var previous = _v3.a;
-			var accum = _v3.b;
-			var _v2 = A2($folkertdev$one_true_path_experiment$LowLevel$Command$merge, previous, instruction);
-			if (_v2.$ === 'Ok') {
-				var merged = _v2.a;
-				return _Utils_Tuple2(merged, accum);
-			} else {
-				return _Utils_Tuple2(
-					instruction,
-					A2($elm$core$List$cons, previous, accum));
-			}
-		});
-	var _v0 = $folkertdev$elm_deque$Deque$toList(drawtos);
-	if (!_v0.b) {
-		return $folkertdev$elm_deque$Deque$empty;
-	} else {
-		var first = _v0.a;
-		var rest = _v0.b;
-		return $folkertdev$elm_deque$Deque$fromList(
-			$elm$core$List$reverse(
-				function (_v1) {
-					var a = _v1.a;
-					var b = _v1.b;
-					return A2($elm$core$List$cons, a, b);
-				}(
-					A3(
-						$elm$core$List$foldl,
-						folder,
-						_Utils_Tuple2(first, _List_Nil),
-						rest))));
-	}
-};
-var $folkertdev$one_true_path_experiment$SubPath$compress = function (subpath) {
-	if (subpath.$ === 'Empty') {
-		return $folkertdev$one_true_path_experiment$SubPath$Empty;
-	} else {
-		var data = subpath.a;
-		return $folkertdev$one_true_path_experiment$SubPath$SubPath(
-			_Utils_update(
-				data,
-				{
-					drawtos: $folkertdev$one_true_path_experiment$SubPath$compressHelper(data.drawtos)
-				}));
-	}
-};
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$DecimalPlaces = function (a) {
-	return {$: 'DecimalPlaces', a: a};
-};
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$decimalPlaces = $folkertdev$svg_path_lowlevel$Path$LowLevel$DecimalPlaces;
-var $folkertdev$one_true_path_experiment$SubPath$defaultConfig = {decimalPlaces: $elm$core$Maybe$Nothing, mergeAdjacent: false};
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
-var $folkertdev$one_true_path_experiment$SubPath$optionFolder = F2(
-	function (option, config) {
-		if (option.$ === 'DecimalPlaces') {
-			var n = option.a;
-			return _Utils_update(
-				config,
-				{
-					decimalPlaces: $elm$core$Maybe$Just(n)
-				});
-		} else {
-			return _Utils_update(
-				config,
-				{mergeAdjacent: true});
-		}
-	});
-var $elm$core$List$singleton = function (value) {
-	return _List_fromArray(
-		[value]);
-};
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$Absolute = {$: 'Absolute'};
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$ClosePath = {$: 'ClosePath'};
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$CurveTo = F2(
-	function (a, b) {
-		return {$: 'CurveTo', a: a, b: b};
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$EllipticalArc = F2(
-	function (a, b) {
-		return {$: 'EllipticalArc', a: a, b: b};
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$LineTo = F2(
-	function (a, b) {
-		return {$: 'LineTo', a: a, b: b};
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$QuadraticBezierCurveTo = F2(
-	function (a, b) {
-		return {$: 'QuadraticBezierCurveTo', a: a, b: b};
-	});
-var $folkertdev$one_true_path_experiment$LowLevel$Command$toLowLevelDrawTo = function (drawto) {
-	switch (drawto.$) {
-		case 'LineTo':
-			var coordinates = drawto.a;
-			return A2($folkertdev$svg_path_lowlevel$Path$LowLevel$LineTo, $folkertdev$svg_path_lowlevel$Path$LowLevel$Absolute, coordinates);
-		case 'CurveTo':
-			var coordinates = drawto.a;
-			return A2($folkertdev$svg_path_lowlevel$Path$LowLevel$CurveTo, $folkertdev$svg_path_lowlevel$Path$LowLevel$Absolute, coordinates);
-		case 'QuadraticBezierCurveTo':
-			var coordinates = drawto.a;
-			return A2($folkertdev$svg_path_lowlevel$Path$LowLevel$QuadraticBezierCurveTo, $folkertdev$svg_path_lowlevel$Path$LowLevel$Absolute, coordinates);
-		case 'EllipticalArc':
-			var _arguments = drawto.a;
-			return A2($folkertdev$svg_path_lowlevel$Path$LowLevel$EllipticalArc, $folkertdev$svg_path_lowlevel$Path$LowLevel$Absolute, _arguments);
-		default:
-			return $folkertdev$svg_path_lowlevel$Path$LowLevel$ClosePath;
-	}
-};
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$MoveTo = F2(
-	function (a, b) {
-		return {$: 'MoveTo', a: a, b: b};
-	});
-var $folkertdev$one_true_path_experiment$LowLevel$Command$toLowLevelMoveTo = function (_v0) {
-	var target = _v0.a;
-	return A2($folkertdev$svg_path_lowlevel$Path$LowLevel$MoveTo, $folkertdev$svg_path_lowlevel$Path$LowLevel$Absolute, target);
-};
-var $folkertdev$one_true_path_experiment$SubPath$toLowLevel = function (subpath) {
-	if (subpath.$ === 'Empty') {
-		return $elm$core$Maybe$Nothing;
-	} else {
-		var moveto = subpath.a.moveto;
-		var drawtos = subpath.a.drawtos;
-		return $elm$core$Maybe$Just(
-			{
-				drawtos: A2(
-					$elm$core$List$map,
-					$folkertdev$one_true_path_experiment$LowLevel$Command$toLowLevelDrawTo,
-					$folkertdev$elm_deque$Deque$toList(drawtos)),
-				moveto: $folkertdev$one_true_path_experiment$LowLevel$Command$toLowLevelMoveTo(moveto)
-			});
-	}
-};
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$defaultConfig = {floatFormatter: $elm$core$String$fromFloat};
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var $elm$core$Basics$abs = function (n) {
-	return (n < 0) ? (-n) : n;
-};
-var $elm$core$Basics$pow = _Basics_pow;
-var $elm$core$Basics$round = _Basics_round;
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$roundTo = F2(
-	function (n, value) {
-		if (!n) {
-			return $elm$core$String$fromInt(
-				$elm$core$Basics$round(value));
-		} else {
-			var sign = (value < 0.0) ? '-' : '';
-			var exp = A2($elm$core$Basics$pow, 10, n);
-			var raised = $elm$core$Basics$abs(
-				$elm$core$Basics$round(value * exp));
-			var decimals = raised % exp;
-			return (!decimals) ? _Utils_ap(
-				sign,
-				$elm$core$String$fromInt((raised / exp) | 0)) : (sign + ($elm$core$String$fromInt((raised / exp) | 0) + ('.' + $elm$core$String$fromInt(decimals))));
-		}
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$optionFolder = F2(
-	function (option, config) {
-		var n = option.a;
-		return _Utils_update(
-			config,
-			{
-				floatFormatter: $folkertdev$svg_path_lowlevel$Path$LowLevel$roundTo(n)
-			});
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$accumulateOptions = A2($elm$core$List$foldl, $folkertdev$svg_path_lowlevel$Path$LowLevel$optionFolder, $folkertdev$svg_path_lowlevel$Path$LowLevel$defaultConfig);
-var $elm$core$List$isEmpty = function (xs) {
-	if (!xs.b) {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$isEmpty = function (command) {
-	switch (command.$) {
-		case 'LineTo':
-			var mode = command.a;
-			var coordinates = command.b;
-			return $elm$core$List$isEmpty(coordinates);
-		case 'Horizontal':
-			var mode = command.a;
-			var coordinates = command.b;
-			return $elm$core$List$isEmpty(coordinates);
-		case 'Vertical':
-			var mode = command.a;
-			var coordinates = command.b;
-			return $elm$core$List$isEmpty(coordinates);
-		case 'CurveTo':
-			var mode = command.a;
-			var coordinates = command.b;
-			return $elm$core$List$isEmpty(coordinates);
-		case 'SmoothCurveTo':
-			var mode = command.a;
-			var coordinates = command.b;
-			return $elm$core$List$isEmpty(coordinates);
-		case 'QuadraticBezierCurveTo':
-			var mode = command.a;
-			var coordinates = command.b;
-			return $elm$core$List$isEmpty(coordinates);
-		case 'SmoothQuadraticBezierCurveTo':
-			var mode = command.a;
-			var coordinates = command.b;
-			return $elm$core$List$isEmpty(coordinates);
-		case 'EllipticalArc':
-			var mode = command.a;
-			var _arguments = command.b;
-			return $elm$core$List$isEmpty(_arguments);
-		default:
-			return false;
-	}
-};
-var $elm$core$String$cons = _String_cons;
-var $elm$core$String$fromChar = function (_char) {
-	return A2($elm$core$String$cons, _char, '');
-};
-var $elm$core$Char$toLower = _Char_toLower;
-var $elm$core$Char$toUpper = _Char_toUpper;
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCharacter = F2(
-	function (mode, character) {
-		if (mode.$ === 'Absolute') {
-			return $elm$core$String$fromChar(
-				$elm$core$Char$toUpper(character));
-		} else {
-			return $elm$core$String$fromChar(
-				$elm$core$Char$toLower(character));
-		}
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate = F2(
-	function (config, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return config.floatFormatter(x) + (',' + config.floatFormatter(y));
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate2 = F2(
-	function (config, _v0) {
-		var c1 = _v0.a;
-		var c2 = _v0.b;
-		return A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate, config, c1) + (' ' + A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate, config, c2));
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate3 = F2(
-	function (config, _v0) {
-		var c1 = _v0.a;
-		var c2 = _v0.b;
-		var c3 = _v0.c;
-		return A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate, config, c1) + (' ' + (A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate, config, c2) + (' ' + A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate, config, c3))));
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$encodeFlags = function (_v0) {
-	var arcFlag = _v0.a;
-	var direction = _v0.b;
-	var _v1 = _Utils_Tuple2(arcFlag, direction);
-	if (_v1.a.$ === 'LargestArc') {
-		if (_v1.b.$ === 'Clockwise') {
-			var _v2 = _v1.a;
-			var _v3 = _v1.b;
-			return _Utils_Tuple2(1, 0);
-		} else {
-			var _v6 = _v1.a;
-			var _v7 = _v1.b;
-			return _Utils_Tuple2(1, 1);
-		}
-	} else {
-		if (_v1.b.$ === 'Clockwise') {
-			var _v4 = _v1.a;
-			var _v5 = _v1.b;
-			return _Utils_Tuple2(0, 0);
-		} else {
-			var _v8 = _v1.a;
-			var _v9 = _v1.b;
-			return _Utils_Tuple2(0, 1);
-		}
-	}
-};
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyEllipticalArcArgument = F2(
-	function (config, _v0) {
-		var radii = _v0.radii;
-		var xAxisRotate = _v0.xAxisRotate;
-		var arcFlag = _v0.arcFlag;
-		var direction = _v0.direction;
-		var target = _v0.target;
-		var _v1 = $folkertdev$svg_path_lowlevel$Path$LowLevel$encodeFlags(
-			_Utils_Tuple2(arcFlag, direction));
-		var arc = _v1.a;
-		var sweep = _v1.b;
-		return A2(
-			$elm$core$String$join,
-			' ',
-			_List_fromArray(
-				[
-					A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate, config, radii),
-					$elm$core$String$fromFloat(xAxisRotate),
-					$elm$core$String$fromInt(arc),
-					$elm$core$String$fromInt(sweep),
-					A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate, config, target)
-				]));
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyDrawTo = F2(
-	function (config, command) {
-		if ($folkertdev$svg_path_lowlevel$Path$LowLevel$isEmpty(command)) {
-			return '';
-		} else {
-			switch (command.$) {
-				case 'LineTo':
-					var mode = command.a;
-					var coordinates = command.b;
-					return _Utils_ap(
-						A2(
-							$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCharacter,
-							mode,
-							_Utils_chr('L')),
-						A2(
-							$elm$core$String$join,
-							' ',
-							A2(
-								$elm$core$List$map,
-								$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate(config),
-								coordinates)));
-				case 'Horizontal':
-					var mode = command.a;
-					var coordinates = command.b;
-					return $elm$core$List$isEmpty(coordinates) ? '' : _Utils_ap(
-						A2(
-							$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCharacter,
-							mode,
-							_Utils_chr('H')),
-						A2(
-							$elm$core$String$join,
-							' ',
-							A2($elm$core$List$map, $elm$core$String$fromFloat, coordinates)));
-				case 'Vertical':
-					var mode = command.a;
-					var coordinates = command.b;
-					return _Utils_ap(
-						A2(
-							$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCharacter,
-							mode,
-							_Utils_chr('V')),
-						A2(
-							$elm$core$String$join,
-							' ',
-							A2($elm$core$List$map, $elm$core$String$fromFloat, coordinates)));
-				case 'CurveTo':
-					var mode = command.a;
-					var coordinates = command.b;
-					return _Utils_ap(
-						A2(
-							$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCharacter,
-							mode,
-							_Utils_chr('C')),
-						A2(
-							$elm$core$String$join,
-							' ',
-							A2(
-								$elm$core$List$map,
-								$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate3(config),
-								coordinates)));
-				case 'SmoothCurveTo':
-					var mode = command.a;
-					var coordinates = command.b;
-					return _Utils_ap(
-						A2(
-							$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCharacter,
-							mode,
-							_Utils_chr('S')),
-						A2(
-							$elm$core$String$join,
-							' ',
-							A2(
-								$elm$core$List$map,
-								$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate2(config),
-								coordinates)));
-				case 'QuadraticBezierCurveTo':
-					var mode = command.a;
-					var coordinates = command.b;
-					return _Utils_ap(
-						A2(
-							$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCharacter,
-							mode,
-							_Utils_chr('Q')),
-						A2(
-							$elm$core$String$join,
-							' ',
-							A2(
-								$elm$core$List$map,
-								$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate2(config),
-								coordinates)));
-				case 'SmoothQuadraticBezierCurveTo':
-					var mode = command.a;
-					var coordinates = command.b;
-					return _Utils_ap(
-						A2(
-							$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCharacter,
-							mode,
-							_Utils_chr('T')),
-						A2(
-							$elm$core$String$join,
-							' ',
-							A2(
-								$elm$core$List$map,
-								$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate(config),
-								coordinates)));
-				case 'EllipticalArc':
-					var mode = command.a;
-					var _arguments = command.b;
-					return _Utils_ap(
-						A2(
-							$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCharacter,
-							mode,
-							_Utils_chr('A')),
-						A2(
-							$elm$core$String$join,
-							' ',
-							A2(
-								$elm$core$List$map,
-								$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyEllipticalArcArgument(config),
-								_arguments)));
-				default:
-					return 'Z';
-			}
-		}
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyMoveTo = F2(
-	function (config, _v0) {
-		var mode = _v0.a;
-		var coordinate = _v0.b;
-		if (mode.$ === 'Absolute') {
-			return 'M' + A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate, config, coordinate);
-		} else {
-			return 'm' + A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyCoordinate, config, coordinate);
-		}
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$toStringSubPath = F2(
-	function (config, _v0) {
-		var moveto = _v0.moveto;
-		var drawtos = _v0.drawtos;
-		return A2($folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyMoveTo, config, moveto) + (' ' + A2(
-			$elm$core$String$join,
-			' ',
-			A2(
-				$elm$core$List$map,
-				$folkertdev$svg_path_lowlevel$Path$LowLevel$stringifyDrawTo(config),
-				drawtos)));
-	});
-var $folkertdev$svg_path_lowlevel$Path$LowLevel$toStringWith = F2(
-	function (options, subpaths) {
-		var config = $folkertdev$svg_path_lowlevel$Path$LowLevel$accumulateOptions(options);
-		return A2(
-			$elm$core$String$join,
-			' ',
-			A2(
-				$elm$core$List$map,
-				$folkertdev$svg_path_lowlevel$Path$LowLevel$toStringSubPath(config),
-				subpaths));
-	});
-var $folkertdev$one_true_path_experiment$SubPath$toStringWith = F2(
-	function (options, subpath) {
-		var config = A3($elm$core$List$foldl, $folkertdev$one_true_path_experiment$SubPath$optionFolder, $folkertdev$one_true_path_experiment$SubPath$defaultConfig, options);
-		var lowLevelOptions = function () {
-			var _v0 = config.decimalPlaces;
-			if (_v0.$ === 'Nothing') {
-				return _List_Nil;
-			} else {
-				var n = _v0.a;
-				return _List_fromArray(
-					[
-						$folkertdev$svg_path_lowlevel$Path$LowLevel$decimalPlaces(n)
-					]);
-			}
-		}();
-		return A2(
-			$elm$core$Maybe$withDefault,
-			'',
-			A2(
-				$elm$core$Maybe$map,
-				A2(
-					$elm$core$Basics$composeL,
-					$folkertdev$svg_path_lowlevel$Path$LowLevel$toStringWith(lowLevelOptions),
-					$elm$core$List$singleton),
-				$folkertdev$one_true_path_experiment$SubPath$toLowLevel(
-					(config.mergeAdjacent ? $folkertdev$one_true_path_experiment$SubPath$compress : $elm$core$Basics$identity)(subpath))));
-	});
-var $folkertdev$one_true_path_experiment$SubPath$toString = function (subpath) {
-	return A2($folkertdev$one_true_path_experiment$SubPath$toStringWith, _List_Nil, subpath);
-};
-var $folkertdev$one_true_path_experiment$Path$toString = A2(
-	$elm$core$Basics$composeL,
-	$elm$core$String$join(' '),
-	$elm$core$List$map($folkertdev$one_true_path_experiment$SubPath$toString));
-var $folkertdev$one_true_path_experiment$Path$element = F2(
-	function (path, attributes) {
-		return A2(
-			$elm$svg$Svg$path,
-			A2(
-				$elm$core$List$cons,
-				$elm$svg$Svg$Attributes$d(
-					$folkertdev$one_true_path_experiment$Path$toString(path)),
-				attributes),
-			_List_Nil);
-	});
-var $avh4$elm_color$Color$toCssString = function (_v0) {
-	var r = _v0.a;
-	var g = _v0.b;
-	var b = _v0.c;
-	var a = _v0.d;
-	var roundTo = function (x) {
-		return $elm$core$Basics$round(x * 1000) / 1000;
-	};
-	var pct = function (x) {
-		return $elm$core$Basics$round(x * 10000) / 100;
-	};
-	return $elm$core$String$concat(
-		_List_fromArray(
-			[
-				'rgba(',
-				$elm$core$String$fromFloat(
-				pct(r)),
-				'%,',
-				$elm$core$String$fromFloat(
-				pct(g)),
-				'%,',
-				$elm$core$String$fromFloat(
-				pct(b)),
-				'%,',
-				$elm$core$String$fromFloat(
-				roundTo(a)),
-				')'
-			]));
-};
-var $elm_community$typed_svg$TypedSvg$TypesToStrings$paintToString = function (paint) {
-	switch (paint.$) {
-		case 'Paint':
-			var color = paint.a;
-			return $avh4$elm_color$Color$toCssString(color);
-		case 'CSSVariable':
-			var string = paint.a;
-			return $elm$core$String$concat(
-				_List_fromArray(
-					['var(' + (string + ')')]));
-		case 'Reference':
-			var string = paint.a;
-			return $elm$core$String$concat(
-				_List_fromArray(
-					['url(#', string, ')']));
-		case 'ContextFill':
-			return 'context-fill';
-		case 'ContextStroke':
-			return 'context-stroke';
-		default:
-			return 'none';
-	}
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$fill = A2(
-	$elm$core$Basics$composeL,
-	$elm_community$typed_svg$TypedSvg$Core$attribute('fill'),
-	$elm_community$typed_svg$TypedSvg$TypesToStrings$paintToString);
-var $elm_community$typed_svg$TypedSvg$Attributes$fontFamily = function (families) {
-	if (!families.b) {
-		return A2($elm_community$typed_svg$TypedSvg$Core$attribute, 'font-family', 'inherit');
-	} else {
-		return A2(
-			$elm_community$typed_svg$TypedSvg$Core$attribute,
-			'font-family',
-			A2($elm$core$String$join, ', ', families));
-	}
-};
 var $elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString = function (length) {
 	switch (length.$) {
 		case 'Cm':
@@ -7887,16 +7207,372 @@ var $elm$virtual_dom$VirtualDom$nodeNS = F2(
 	});
 var $elm_community$typed_svg$TypedSvg$Core$node = $elm$virtual_dom$VirtualDom$nodeNS('http://www.w3.org/2000/svg');
 var $elm_community$typed_svg$TypedSvg$g = $elm_community$typed_svg$TypedSvg$Core$node('g');
+var $author$project$Data$h = 450;
 var $elm_community$typed_svg$TypedSvg$Attributes$height = function (length) {
 	return A2(
 		$elm_community$typed_svg$TypedSvg$Core$attribute,
 		'height',
 		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
 };
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var $author$project$Data$padding = 60;
+var $elm_community$typed_svg$TypedSvg$Types$AnchorMiddle = {$: 'AnchorMiddle'};
+var $elm_community$typed_svg$TypedSvg$Types$Px = function (a) {
+	return {$: 'Px', a: a};
+};
+var $elm_community$typed_svg$TypedSvg$circle = $elm_community$typed_svg$TypedSvg$Core$node('circle');
+var $elm_community$typed_svg$TypedSvg$Attributes$class = function (names) {
+	return A2(
+		$elm_community$typed_svg$TypedSvg$Core$attribute,
+		'class',
+		A2($elm$core$String$join, ' ', names));
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$cx = function (length) {
+	return A2(
+		$elm_community$typed_svg$TypedSvg$Core$attribute,
+		'cx',
+		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
 var $elm_community$typed_svg$TypedSvg$Types$px = $elm_community$typed_svg$TypedSvg$Types$Px;
-var $elm_community$typed_svg$TypedSvg$Attributes$InPx$height = function (value) {
-	return $elm_community$typed_svg$TypedSvg$Attributes$height(
+var $elm_community$typed_svg$TypedSvg$Attributes$InPx$cx = function (value) {
+	return $elm_community$typed_svg$TypedSvg$Attributes$cx(
 		$elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$cy = function (length) {
+	return A2(
+		$elm_community$typed_svg$TypedSvg$Core$attribute,
+		'cy',
+		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$InPx$cy = function (value) {
+	return $elm_community$typed_svg$TypedSvg$Attributes$cy(
+		$elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$fontFamily = function (families) {
+	if (!families.b) {
+		return A2($elm_community$typed_svg$TypedSvg$Core$attribute, 'font-family', 'inherit');
+	} else {
+		return A2(
+			$elm_community$typed_svg$TypedSvg$Core$attribute,
+			'font-family',
+			A2($elm$core$String$join, ', ', families));
+	}
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$r = function (length) {
+	return A2(
+		$elm_community$typed_svg$TypedSvg$Core$attribute,
+		'r',
+		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$InPx$r = function (value) {
+	return $elm_community$typed_svg$TypedSvg$Attributes$r(
+		$elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var $author$project$Data$radius = 5.0;
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm_community$typed_svg$TypedSvg$TypesToStrings$anchorAlignmentToString = function (anchorAlignment) {
+	switch (anchorAlignment.$) {
+		case 'AnchorInherit':
+			return 'inherit';
+		case 'AnchorStart':
+			return 'start';
+		case 'AnchorMiddle':
+			return 'middle';
+		default:
+			return 'end';
+	}
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$textAnchor = function (anchorAlignment) {
+	return A2(
+		$elm_community$typed_svg$TypedSvg$Core$attribute,
+		'text-anchor',
+		$elm_community$typed_svg$TypedSvg$TypesToStrings$anchorAlignmentToString(anchorAlignment));
+};
+var $elm_community$typed_svg$TypedSvg$text_ = $elm_community$typed_svg$TypedSvg$Core$node('text');
+var $elm$core$String$concat = function (strings) {
+	return A2($elm$core$String$join, '', strings);
+};
+var $elm_community$typed_svg$TypedSvg$TypesToStrings$transformToString = function (xform) {
+	var tr = F2(
+		function (name, args) {
+			return $elm$core$String$concat(
+				_List_fromArray(
+					[
+						name,
+						'(',
+						A2(
+						$elm$core$String$join,
+						' ',
+						A2($elm$core$List$map, $elm$core$String$fromFloat, args)),
+						')'
+					]));
+		});
+	switch (xform.$) {
+		case 'Matrix':
+			var a = xform.a;
+			var b = xform.b;
+			var c = xform.c;
+			var d = xform.d;
+			var e = xform.e;
+			var f = xform.f;
+			return A2(
+				tr,
+				'matrix',
+				_List_fromArray(
+					[a, b, c, d, e, f]));
+		case 'Rotate':
+			var a = xform.a;
+			var x = xform.b;
+			var y = xform.c;
+			return A2(
+				tr,
+				'rotate',
+				_List_fromArray(
+					[a, x, y]));
+		case 'Scale':
+			var x = xform.a;
+			var y = xform.b;
+			return A2(
+				tr,
+				'scale',
+				_List_fromArray(
+					[x, y]));
+		case 'SkewX':
+			var x = xform.a;
+			return A2(
+				tr,
+				'skewX',
+				_List_fromArray(
+					[x]));
+		case 'SkewY':
+			var y = xform.a;
+			return A2(
+				tr,
+				'skewY',
+				_List_fromArray(
+					[y]));
+		default:
+			var x = xform.a;
+			var y = xform.b;
+			return A2(
+				tr,
+				'translate',
+				_List_fromArray(
+					[x, y]));
+	}
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$transform = function (transforms) {
+	return A2(
+		$elm_community$typed_svg$TypedSvg$Core$attribute,
+		'transform',
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2($elm$core$List$map, $elm_community$typed_svg$TypedSvg$TypesToStrings$transformToString, transforms)));
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$x = function (length) {
+	return A2(
+		$elm_community$typed_svg$TypedSvg$Core$attribute,
+		'x',
+		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$InPx$x = function (value) {
+	return $elm_community$typed_svg$TypedSvg$Attributes$x(
+		$elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$y = function (length) {
+	return A2(
+		$elm_community$typed_svg$TypedSvg$Core$attribute,
+		'y',
+		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$InPx$y = function (value) {
+	return $elm_community$typed_svg$TypedSvg$Attributes$y(
+		$elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var $author$project$Scatterplot$point = F4(
+	function (att, scaleX, scaleY, xyPoint) {
+		var dataPoint = function () {
+			switch (att.$) {
+				case 'IMVS':
+					return _Utils_Tuple2(xyPoint.x, xyPoint.y);
+				case 'TMPS':
+					return _Utils_Tuple2(xyPoint.a, xyPoint.b);
+				case 'IMRS':
+					return _Utils_Tuple2(xyPoint.z, xyPoint.y);
+				case 'TMRS':
+					return _Utils_Tuple2(xyPoint.z, xyPoint.b);
+				case 'TMRP':
+					return _Utils_Tuple2(xyPoint.z, xyPoint.a);
+				case 'TMSS':
+					return _Utils_Tuple2(xyPoint.c, xyPoint.b);
+				case 'IMSS':
+					return _Utils_Tuple2(xyPoint.c, xyPoint.y);
+				case 'TMSP':
+					return _Utils_Tuple2(xyPoint.c, xyPoint.a);
+				case 'TMTP':
+					return _Utils_Tuple2(xyPoint.e, xyPoint.a);
+				case 'IMTV':
+					return _Utils_Tuple2(xyPoint.e, xyPoint.x);
+				case 'IMRY':
+					return _Utils_Tuple2(xyPoint.d, xyPoint.y);
+				default:
+					return _Utils_Tuple2(xyPoint.d, xyPoint.b);
+			}
+		}();
+		return A2(
+			$elm_community$typed_svg$TypedSvg$g,
+			_List_fromArray(
+				[
+					$elm_community$typed_svg$TypedSvg$Attributes$class(
+					_List_fromArray(
+						['point']))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm_community$typed_svg$TypedSvg$g,
+					_List_fromArray(
+						[
+							$elm_community$typed_svg$TypedSvg$Attributes$transform(
+							_List_fromArray(
+								[
+									A2($elm_community$typed_svg$TypedSvg$Types$Translate, $author$project$Data$padding, $author$project$Data$padding)
+								]))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm_community$typed_svg$TypedSvg$text_,
+							_List_fromArray(
+								[
+									$elm_community$typed_svg$TypedSvg$Attributes$InPx$x(320),
+									$elm_community$typed_svg$TypedSvg$Attributes$InPx$y(-100),
+									$elm_community$typed_svg$TypedSvg$Attributes$textAnchor($elm_community$typed_svg$TypedSvg$Types$AnchorMiddle)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(xyPoint.pointName)
+								]))
+						])),
+					A2(
+					$elm_community$typed_svg$TypedSvg$g,
+					_List_fromArray(
+						[
+							$elm_community$typed_svg$TypedSvg$Attributes$fontSize(
+							$elm_community$typed_svg$TypedSvg$Types$Px(10.0)),
+							$elm_community$typed_svg$TypedSvg$Attributes$fontFamily(
+							_List_fromArray(
+								['sans-serif'])),
+							$elm_community$typed_svg$TypedSvg$Attributes$transform(
+							_List_fromArray(
+								[
+									A2(
+									$elm_community$typed_svg$TypedSvg$Types$Translate,
+									A2($gampleman$elm_visualization$Scale$convert, scaleX, dataPoint.a),
+									A2($gampleman$elm_visualization$Scale$convert, scaleY, dataPoint.b))
+								]))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm_community$typed_svg$TypedSvg$circle,
+							_List_fromArray(
+								[
+									$elm_community$typed_svg$TypedSvg$Attributes$InPx$cx(0),
+									$elm_community$typed_svg$TypedSvg$Attributes$InPx$cy(0),
+									$elm_community$typed_svg$TypedSvg$Attributes$InPx$r($author$project$Data$radius)
+								]),
+							_List_Nil)
+						]))
+				]));
+	});
+var $elm_community$typed_svg$TypedSvg$style = $elm_community$typed_svg$TypedSvg$Core$node('style');
+var $elm_community$typed_svg$TypedSvg$svg = $elm_community$typed_svg$TypedSvg$Core$node('svg');
+var $elm_community$typed_svg$TypedSvg$Core$text = $elm$virtual_dom$VirtualDom$text;
+var $elm_community$typed_svg$TypedSvg$Attributes$viewBox = F4(
+	function (minX, minY, vWidth, vHeight) {
+		return A2(
+			$elm_community$typed_svg$TypedSvg$Core$attribute,
+			'viewBox',
+			A2(
+				$elm$core$String$join,
+				' ',
+				A2(
+					$elm$core$List$map,
+					$elm$core$String$fromFloat,
+					_List_fromArray(
+						[minX, minY, vWidth, vHeight]))));
+	});
+var $author$project$Data$w = 900;
+var $author$project$Data$defaultExtent = _Utils_Tuple2(0, 100);
+var $gampleman$elm_visualization$Statistics$extentBy = F2(
+	function (fn, list) {
+		var min = F2(
+			function (a, b) {
+				return (_Utils_cmp(
+					fn(a),
+					fn(b)) < 0) ? a : b;
+			});
+		var max = F2(
+			function (a, b) {
+				return (_Utils_cmp(
+					fn(a),
+					fn(b)) > 0) ? a : b;
+			});
+		var helper = F2(
+			function (l, _v0) {
+				helper:
+				while (true) {
+					var mini = _v0.a;
+					var maxi = _v0.b;
+					if (!l.b) {
+						return _Utils_Tuple2(mini, maxi);
+					} else {
+						var x = l.a;
+						var xs = l.b;
+						var $temp$l = xs,
+							$temp$_v0 = _Utils_Tuple2(
+							A2(min, mini, x),
+							A2(max, maxi, x));
+						l = $temp$l;
+						_v0 = $temp$_v0;
+						continue helper;
+					}
+				}
+			});
+		if (!list.b) {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			var x = list.a;
+			var xs = list.b;
+			return $elm$core$Maybe$Just(
+				A2(
+					helper,
+					xs,
+					_Utils_Tuple2(x, x)));
+		}
+	});
+var $gampleman$elm_visualization$Statistics$extent = $gampleman$elm_visualization$Statistics$extentBy($elm$core$Basics$identity);
+var $author$project$Data$tickCount = 5;
+var $author$project$Data$wideExtent = function (values) {
+	var scale = A2(
+		$elm$core$Maybe$withDefault,
+		$author$project$Data$defaultExtent,
+		$gampleman$elm_visualization$Statistics$extent(values));
+	var range = (-scale.a) + scale.b;
+	var up = scale.b + (range / (2 * $author$project$Data$tickCount));
+	var down = scale.a - (range / (2 * $author$project$Data$tickCount));
+	return (down < 0) ? _Utils_Tuple2(0, up) : _Utils_Tuple2(down, up);
+};
+var $elm_community$typed_svg$TypedSvg$Attributes$width = function (length) {
+	return A2(
+		$elm_community$typed_svg$TypedSvg$Core$attribute,
+		'width',
+		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
 };
 var $elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
 var $gampleman$elm_visualization$Scale$tickFormat = function (_v0) {
@@ -7986,18 +7662,20 @@ var $gampleman$elm_visualization$Axis$computeOptions = F2(
 			},
 			postList);
 	});
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
 var $elm$svg$Svg$Attributes$dy = _VirtualDom_attribute('dy');
 var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
 var $elm$svg$Svg$Attributes$fontFamily = _VirtualDom_attribute('font-family');
 var $elm$svg$Svg$Attributes$fontSize = _VirtualDom_attribute('font-size');
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
 var $elm$svg$Svg$line = $elm$svg$Svg$trustedNode('line');
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
 var $gampleman$elm_visualization$Scale$rangeExtent = function (_v0) {
 	var options = _v0.a;
 	return A2(options.rangeExtent, options.domain, options.range);
 };
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$svg$Svg$Attributes$textAnchor = _VirtualDom_attribute('text-anchor');
 var $elm$svg$Svg$text_ = $elm$svg$Svg$trustedNode('text');
@@ -8088,77 +7766,23 @@ var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
 var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
 var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
-var $gampleman$elm_visualization$Axis$horizontalAttrs = {
-	horizontal: true,
-	translate: function (y) {
-		return 'translate(0, ' + ($elm$core$String$fromFloat(y) + ')');
+var $gampleman$elm_visualization$Axis$verticalAttrs = {
+	horizontal: false,
+	translate: function (x) {
+		return 'translate(' + ($elm$core$String$fromFloat(x) + ', 0)');
 	},
-	x: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$x, $elm$core$String$fromFloat),
-	x1: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$x1, $elm$core$String$fromFloat),
-	x2: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$x2, $elm$core$String$fromFloat),
-	y: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$y, $elm$core$String$fromFloat),
-	y1: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$y1, $elm$core$String$fromFloat),
-	y2: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$y2, $elm$core$String$fromFloat)
+	x: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$y, $elm$core$String$fromFloat),
+	x1: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$y1, $elm$core$String$fromFloat),
+	x2: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$y2, $elm$core$String$fromFloat),
+	y: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$x, $elm$core$String$fromFloat),
+	y1: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$x1, $elm$core$String$fromFloat),
+	y2: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$x2, $elm$core$String$fromFloat)
 };
-var $gampleman$elm_visualization$Axis$left = A4($gampleman$elm_visualization$Axis$element, $gampleman$elm_visualization$Axis$horizontalAttrs, -1, '0.32em', 'end');
-var $gampleman$elm_visualization$Shape$Generators$line = F2(
-	function (curve, data) {
-		var makeCurves = F2(
-			function (datum, _v3) {
-				var prev = _v3.a;
-				var list = _v3.b;
-				var _v0 = _Utils_Tuple3(prev, datum, list);
-				if (_v0.b.$ === 'Nothing') {
-					var _v1 = _v0.b;
-					var l = _v0.c;
-					return _Utils_Tuple2(false, l);
-				} else {
-					if (!_v0.a) {
-						var point = _v0.b.a;
-						var l = _v0.c;
-						return _Utils_Tuple2(
-							true,
-							A2(
-								$elm$core$List$cons,
-								_List_fromArray(
-									[point]),
-								l));
-					} else {
-						if (_v0.c.b) {
-							var p1 = _v0.b.a;
-							var _v2 = _v0.c;
-							var ps = _v2.a;
-							var l = _v2.b;
-							return _Utils_Tuple2(
-								true,
-								A2(
-									$elm$core$List$cons,
-									A2($elm$core$List$cons, p1, ps),
-									l));
-						} else {
-							var p1 = _v0.b.a;
-							var l = _v0.c;
-							return _Utils_Tuple2(
-								true,
-								A2(
-									$elm$core$List$cons,
-									_List_fromArray(
-										[p1]),
-									l));
-						}
-					}
-				}
-			});
-		return A2(
-			$elm$core$List$map,
-			curve,
-			A3(
-				$elm$core$List$foldr,
-				makeCurves,
-				_Utils_Tuple2(false, _List_Nil),
-				data).b);
-	});
-var $gampleman$elm_visualization$Shape$line = $gampleman$elm_visualization$Shape$Generators$line;
+var $gampleman$elm_visualization$Axis$bottom = A4($gampleman$elm_visualization$Axis$element, $gampleman$elm_visualization$Axis$verticalAttrs, 1, '0.71em', 'middle');
+var $gampleman$elm_visualization$Axis$TickCount = function (a) {
+	return {$: 'TickCount', a: a};
+};
+var $gampleman$elm_visualization$Axis$tickCount = $gampleman$elm_visualization$Axis$TickCount;
 var $gampleman$elm_visualization$Scale$Scale = function (a) {
 	return {$: 'Scale', a: a};
 };
@@ -8268,6 +7892,7 @@ var $gampleman$elm_visualization$Scale$Continuous$e10 = $elm$core$Basics$sqrt(50
 var $gampleman$elm_visualization$Scale$Continuous$e2 = $elm$core$Basics$sqrt(2);
 var $gampleman$elm_visualization$Scale$Continuous$e5 = $elm$core$Basics$sqrt(10);
 var $gampleman$elm_visualization$Scale$Continuous$ln10 = A2($elm$core$Basics$logBase, $elm$core$Basics$e, 10);
+var $elm$core$Basics$pow = _Basics_pow;
 var $gampleman$elm_visualization$Scale$Continuous$tickIncrement = F3(
 	function (start, stop, count) {
 		var step = (stop - start) / A2($elm$core$Basics$max, 0, count);
@@ -8313,6 +7938,9 @@ var $gampleman$elm_visualization$Scale$Continuous$nice = F2(
 			},
 			domain);
 	});
+var $elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
+};
 var $gampleman$elm_visualization$Scale$Continuous$exponent = function (x) {
 	return (!x) ? 0 : ((x < 1) ? (1 + $gampleman$elm_visualization$Scale$Continuous$exponent(x * 10)) : 0);
 };
@@ -8341,6 +7969,10 @@ var $gampleman$elm_visualization$Statistics$tickStep = F3(
 			$elm$core$Basics$sqrt(2)) > -1) ? (step1 * 2) : step1));
 		return (_Utils_cmp(stop, start) < 0) ? (-step2) : step2;
 	});
+var $elm$core$String$cons = _String_cons;
+var $elm$core$String$fromChar = function (_char) {
+	return A2($elm$core$String$cons, _char, '');
+};
 var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
 var $elm$core$String$repeatHelp = F3(
@@ -8364,6 +7996,7 @@ var $elm$core$String$padRight = F3(
 				n - $elm$core$String$length(string),
 				$elm$core$String$fromChar(_char)));
 	});
+var $elm$core$Basics$round = _Basics_round;
 var $gampleman$elm_visualization$Scale$Continuous$toFixed = F2(
 	function (precision, value) {
 		var power_ = A2($elm$core$Basics$pow, 10, precision);
@@ -8477,574 +8110,253 @@ var $gampleman$elm_visualization$Scale$linear = F2(
 		return $gampleman$elm_visualization$Scale$Scale(
 			A2($gampleman$elm_visualization$Scale$Continuous$linear, range_, domain_));
 	});
-var $folkertdev$one_true_path_experiment$SubPath$empty = $folkertdev$one_true_path_experiment$SubPath$Empty;
-var $folkertdev$one_true_path_experiment$LowLevel$Command$lineTo = $folkertdev$one_true_path_experiment$LowLevel$Command$LineTo;
-var $folkertdev$one_true_path_experiment$LowLevel$Command$MoveTo = function (a) {
-	return {$: 'MoveTo', a: a};
-};
-var $folkertdev$one_true_path_experiment$LowLevel$Command$moveTo = $folkertdev$one_true_path_experiment$LowLevel$Command$MoveTo;
-var $folkertdev$one_true_path_experiment$SubPath$with = F2(
-	function (moveto, drawtos) {
-		return $folkertdev$one_true_path_experiment$SubPath$SubPath(
-			{
-				drawtos: $folkertdev$elm_deque$Deque$fromList(drawtos),
-				moveto: moveto
-			});
-	});
-var $folkertdev$one_true_path_experiment$Curve$linear = function (points) {
-	if (!points.b) {
-		return $folkertdev$one_true_path_experiment$SubPath$empty;
-	} else {
-		var x = points.a;
-		var xs = points.b;
-		return A2(
-			$folkertdev$one_true_path_experiment$SubPath$with,
-			$folkertdev$one_true_path_experiment$LowLevel$Command$moveTo(x),
-			_List_fromArray(
-				[
-					$folkertdev$one_true_path_experiment$LowLevel$Command$lineTo(xs)
-				]));
-	}
-};
-var $gampleman$elm_visualization$Shape$linearCurve = $folkertdev$one_true_path_experiment$Curve$linear;
-var $elm$core$List$map3 = _List_map3;
-var $author$project$ParallelCoordinates$noAxis = 8;
-var $author$project$Data$padding = 60;
-var $elm_community$typed_svg$TypedSvg$rect = $elm_community$typed_svg$TypedSvg$Core$node('rect');
-var $elm_community$typed_svg$TypedSvg$Attributes$stroke = A2(
-	$elm$core$Basics$composeL,
-	$elm_community$typed_svg$TypedSvg$Core$attribute('stroke'),
-	$elm_community$typed_svg$TypedSvg$TypesToStrings$paintToString);
-var $elm_community$typed_svg$TypedSvg$style = $elm_community$typed_svg$TypedSvg$Core$node('style');
-var $elm_community$typed_svg$TypedSvg$svg = $elm_community$typed_svg$TypedSvg$Core$node('svg');
-var $elm_community$typed_svg$TypedSvg$Core$text = $elm$virtual_dom$VirtualDom$text;
-var $elm_community$typed_svg$TypedSvg$TypesToStrings$anchorAlignmentToString = function (anchorAlignment) {
-	switch (anchorAlignment.$) {
-		case 'AnchorInherit':
-			return 'inherit';
-		case 'AnchorStart':
-			return 'start';
-		case 'AnchorMiddle':
-			return 'middle';
-		default:
-			return 'end';
-	}
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$textAnchor = function (anchorAlignment) {
+var $author$project$Scatterplot$xScale = function (values) {
 	return A2(
-		$elm_community$typed_svg$TypedSvg$Core$attribute,
-		'text-anchor',
-		$elm_community$typed_svg$TypedSvg$TypesToStrings$anchorAlignmentToString(anchorAlignment));
+		$gampleman$elm_visualization$Scale$linear,
+		_Utils_Tuple2(0, $author$project$Data$w - (2 * $author$project$Data$padding)),
+		$author$project$Data$wideExtent(values));
 };
-var $elm_community$typed_svg$TypedSvg$text_ = $elm_community$typed_svg$TypedSvg$Core$node('text');
-var $gampleman$elm_visualization$Axis$TickCount = function (a) {
-	return {$: 'TickCount', a: a};
-};
-var $gampleman$elm_visualization$Axis$tickCount = $gampleman$elm_visualization$Axis$TickCount;
-var $elm_community$typed_svg$TypedSvg$TypesToStrings$transformToString = function (xform) {
-	var tr = F2(
-		function (name, args) {
-			return $elm$core$String$concat(
-				_List_fromArray(
-					[
-						name,
-						'(',
-						A2(
-						$elm$core$String$join,
-						' ',
-						A2($elm$core$List$map, $elm$core$String$fromFloat, args)),
-						')'
-					]));
-		});
-	switch (xform.$) {
-		case 'Matrix':
-			var a = xform.a;
-			var b = xform.b;
-			var c = xform.c;
-			var d = xform.d;
-			var e = xform.e;
-			var f = xform.f;
-			return A2(
-				tr,
-				'matrix',
-				_List_fromArray(
-					[a, b, c, d, e, f]));
-		case 'Rotate':
-			var a = xform.a;
-			var x = xform.b;
-			var y = xform.c;
-			return A2(
-				tr,
-				'rotate',
-				_List_fromArray(
-					[a, x, y]));
-		case 'Scale':
-			var x = xform.a;
-			var y = xform.b;
-			return A2(
-				tr,
-				'scale',
-				_List_fromArray(
-					[x, y]));
-		case 'SkewX':
-			var x = xform.a;
-			return A2(
-				tr,
-				'skewX',
-				_List_fromArray(
-					[x]));
-		case 'SkewY':
-			var y = xform.a;
-			return A2(
-				tr,
-				'skewY',
-				_List_fromArray(
-					[y]));
-		default:
-			var x = xform.a;
-			var y = xform.b;
-			return A2(
-				tr,
-				'translate',
-				_List_fromArray(
-					[x, y]));
-	}
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$transform = function (transforms) {
+var $author$project$Scatterplot$xAxis = function (values) {
 	return A2(
-		$elm_community$typed_svg$TypedSvg$Core$attribute,
-		'transform',
-		A2(
-			$elm$core$String$join,
-			' ',
-			A2($elm$core$List$map, $elm_community$typed_svg$TypedSvg$TypesToStrings$transformToString, transforms)));
+		$gampleman$elm_visualization$Axis$bottom,
+		_List_fromArray(
+			[
+				$gampleman$elm_visualization$Axis$tickCount($author$project$Data$tickCount)
+			]),
+		$author$project$Scatterplot$xScale(values));
 };
-var $elm$core$List$repeatHelp = F3(
-	function (result, n, value) {
-		repeatHelp:
-		while (true) {
-			if (n <= 0) {
-				return result;
-			} else {
-				var $temp$result = A2($elm$core$List$cons, value, result),
-					$temp$n = n - 1,
-					$temp$value = value;
-				result = $temp$result;
-				n = $temp$n;
-				value = $temp$value;
-				continue repeatHelp;
+var $gampleman$elm_visualization$Axis$horizontalAttrs = {
+	horizontal: true,
+	translate: function (y) {
+		return 'translate(0, ' + ($elm$core$String$fromFloat(y) + ')');
+	},
+	x: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$x, $elm$core$String$fromFloat),
+	x1: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$x1, $elm$core$String$fromFloat),
+	x2: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$x2, $elm$core$String$fromFloat),
+	y: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$y, $elm$core$String$fromFloat),
+	y1: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$y1, $elm$core$String$fromFloat),
+	y2: A2($elm$core$Basics$composeL, $elm$svg$Svg$Attributes$y2, $elm$core$String$fromFloat)
+};
+var $gampleman$elm_visualization$Axis$left = A4($gampleman$elm_visualization$Axis$element, $gampleman$elm_visualization$Axis$horizontalAttrs, -1, '0.32em', 'end');
+var $author$project$Scatterplot$yScale = function (values) {
+	return A2(
+		$gampleman$elm_visualization$Scale$linear,
+		_Utils_Tuple2($author$project$Data$h - (2 * $author$project$Data$padding), 0),
+		$author$project$Data$wideExtent(values));
+};
+var $author$project$Scatterplot$yAxis = function (values) {
+	return A2(
+		$gampleman$elm_visualization$Axis$left,
+		_List_fromArray(
+			[
+				$gampleman$elm_visualization$Axis$tickCount($author$project$Data$tickCount)
+			]),
+		$author$project$Scatterplot$yScale(values));
+};
+var $author$project$Scatterplot$scatterplot = F2(
+	function (model, att) {
+		var zValues = A2(
+			$elm$core$List$map,
+			function ($) {
+				return $.z;
+			},
+			model.data);
+		var yValues = A2(
+			$elm$core$List$map,
+			function ($) {
+				return $.y;
+			},
+			model.data);
+		var xValues = A2(
+			$elm$core$List$map,
+			function ($) {
+				return $.x;
+			},
+			model.data);
+		var half = function (t) {
+			return ((t.b - t.a) * 8) / 9;
+		};
+		var eValues = A2(
+			$elm$core$List$map,
+			function ($) {
+				return $.e;
+			},
+			model.data);
+		var dValues = A2(
+			$elm$core$List$map,
+			function ($) {
+				return $.d;
+			},
+			model.data);
+		var cValues = A2(
+			$elm$core$List$map,
+			function ($) {
+				return $.c;
+			},
+			model.data);
+		var bValues = A2(
+			$elm$core$List$map,
+			function ($) {
+				return $.b;
+			},
+			model.data);
+		var aValues = A2(
+			$elm$core$List$map,
+			function ($) {
+				return $.a;
+			},
+			model.data);
+		var dataPoint = function () {
+			switch (att.$) {
+				case 'IMVS':
+					return _Utils_Tuple2(xValues, yValues);
+				case 'TMPS':
+					return _Utils_Tuple2(aValues, bValues);
+				case 'IMRS':
+					return _Utils_Tuple2(zValues, yValues);
+				case 'TMRS':
+					return _Utils_Tuple2(zValues, bValues);
+				case 'TMRP':
+					return _Utils_Tuple2(zValues, aValues);
+				case 'TMSS':
+					return _Utils_Tuple2(cValues, bValues);
+				case 'IMSS':
+					return _Utils_Tuple2(cValues, yValues);
+				case 'TMSP':
+					return _Utils_Tuple2(cValues, aValues);
+				case 'TMTP':
+					return _Utils_Tuple2(eValues, aValues);
+				case 'IMTV':
+					return _Utils_Tuple2(eValues, xValues);
+				case 'IMRY':
+					return _Utils_Tuple2(dValues, yValues);
+				default:
+					return _Utils_Tuple2(dValues, bValues);
 			}
-		}
-	});
-var $elm$core$List$repeat = F2(
-	function (n, value) {
-		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
-	});
-var $elm_community$list_extra$List$Extra$rowsLength = function (listOfLists) {
-	if (!listOfLists.b) {
-		return 0;
-	} else {
-		var x = listOfLists.a;
-		return $elm$core$List$length(x);
-	}
-};
-var $elm_community$list_extra$List$Extra$transpose = function (listOfLists) {
-	return A3(
-		$elm$core$List$foldr,
-		$elm$core$List$map2($elm$core$List$cons),
-		A2(
-			$elm$core$List$repeat,
-			$elm_community$list_extra$List$Extra$rowsLength(listOfLists),
-			_List_Nil),
-		listOfLists);
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$viewBox = F4(
-	function (minX, minY, vWidth, vHeight) {
-		return A2(
-			$elm_community$typed_svg$TypedSvg$Core$attribute,
-			'viewBox',
-			A2(
-				$elm$core$String$join,
-				' ',
-				A2(
-					$elm$core$List$map,
-					$elm$core$String$fromFloat,
-					_List_fromArray(
-						[minX, minY, vWidth, vHeight]))));
-	});
-var $author$project$Data$defaultExtent = _Utils_Tuple2(0, 100);
-var $gampleman$elm_visualization$Statistics$extentBy = F2(
-	function (fn, list) {
-		var min = F2(
-			function (a, b) {
-				return (_Utils_cmp(
-					fn(a),
-					fn(b)) < 0) ? a : b;
-			});
-		var max = F2(
-			function (a, b) {
-				return (_Utils_cmp(
-					fn(a),
-					fn(b)) > 0) ? a : b;
-			});
-		var helper = F2(
-			function (l, _v0) {
-				helper:
-				while (true) {
-					var mini = _v0.a;
-					var maxi = _v0.b;
-					if (!l.b) {
-						return _Utils_Tuple2(mini, maxi);
-					} else {
-						var x = l.a;
-						var xs = l.b;
-						var $temp$l = xs,
-							$temp$_v0 = _Utils_Tuple2(
-							A2(min, mini, x),
-							A2(max, maxi, x));
-						l = $temp$l;
-						_v0 = $temp$_v0;
-						continue helper;
-					}
-				}
-			});
-		if (!list.b) {
-			return $elm$core$Maybe$Nothing;
-		} else {
-			var x = list.a;
-			var xs = list.b;
-			return $elm$core$Maybe$Just(
-				A2(
-					helper,
-					xs,
-					_Utils_Tuple2(x, x)));
-		}
-	});
-var $gampleman$elm_visualization$Statistics$extent = $gampleman$elm_visualization$Statistics$extentBy($elm$core$Basics$identity);
-var $author$project$Data$tickCount = 5;
-var $author$project$Data$wideExtent = function (values) {
-	var scale = A2(
-		$elm$core$Maybe$withDefault,
-		$author$project$Data$defaultExtent,
-		$gampleman$elm_visualization$Statistics$extent(values));
-	var range = (-scale.a) + scale.b;
-	var up = scale.b + (range / (2 * $author$project$Data$tickCount));
-	var down = scale.a - (range / (2 * $author$project$Data$tickCount));
-	return (down < 0) ? _Utils_Tuple2(0, up) : _Utils_Tuple2(down, up);
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$width = function (length) {
-	return A2(
-		$elm_community$typed_svg$TypedSvg$Core$attribute,
-		'width',
-		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$InPx$width = function (value) {
-	return $elm_community$typed_svg$TypedSvg$Attributes$width(
-		$elm_community$typed_svg$TypedSvg$Types$px(value));
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$x = function (length) {
-	return A2(
-		$elm_community$typed_svg$TypedSvg$Core$attribute,
-		'x',
-		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$InPx$x = function (value) {
-	return $elm_community$typed_svg$TypedSvg$Attributes$x(
-		$elm_community$typed_svg$TypedSvg$Types$px(value));
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$y = function (length) {
-	return A2(
-		$elm_community$typed_svg$TypedSvg$Core$attribute,
-		'y',
-		$elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
-};
-var $elm_community$typed_svg$TypedSvg$Attributes$InPx$y = function (value) {
-	return $elm_community$typed_svg$TypedSvg$Attributes$y(
-		$elm_community$typed_svg$TypedSvg$Types$px(value));
-};
-var $author$project$ParallelCoordinates$parCoord = F4(
-	function (w, ar, bgrC, model) {
-		var xSkala = A2(
-			$gampleman$elm_visualization$Scale$linear,
-			_Utils_Tuple2(0, w),
-			_Utils_Tuple2(
-				1,
-				$elm$core$List$length(model.dimDescription)));
-		var listeTransformieren = $elm_community$list_extra$List$Extra$transpose(
-			A2(
-				$elm$core$List$map,
-				function ($) {
-					return $.value;
-				},
-				$elm$core$List$concat(model.data)));
-		var listeWeiteErweiterung = A2($elm$core$List$map, $author$project$Data$wideExtent, listeTransformieren);
-		var h = w / ar;
-		var listeSkala = A2(
-			$elm$core$List$map,
-			$gampleman$elm_visualization$Scale$linear(
-				_Utils_Tuple2(h, 0)),
-			listeWeiteErweiterung);
-		var listeAchse = A2(
-			$elm$core$List$map,
-			$gampleman$elm_visualization$Axis$left(
-				_List_fromArray(
-					[
-						$gampleman$elm_visualization$Axis$tickCount($author$project$ParallelCoordinates$noAxis)
-					])),
-			listeSkala);
+		}();
+		var labelPositions = {
+			x: half(
+				$author$project$Data$wideExtent(dataPoint.a)),
+			y: $author$project$Data$wideExtent(dataPoint.b).b
+		};
+		var xScaleLocal = $author$project$Scatterplot$xScale(dataPoint.a);
+		var yScaleLocal = $author$project$Scatterplot$yScale(dataPoint.b);
 		return A2(
 			$elm_community$typed_svg$TypedSvg$svg,
 			_List_fromArray(
 				[
-					A4($elm_community$typed_svg$TypedSvg$Attributes$viewBox, 0, 0, w + (2 * $author$project$Data$padding), h + (2 * $author$project$Data$padding)),
+					A4($elm_community$typed_svg$TypedSvg$Attributes$viewBox, 0, 0, $author$project$Data$w, $author$project$Data$h),
 					$elm_community$typed_svg$TypedSvg$Attributes$width(
-					$elm_community$typed_svg$TypedSvg$Types$Percent(90)),
+					$elm_community$typed_svg$TypedSvg$Types$Percent(100)),
 					$elm_community$typed_svg$TypedSvg$Attributes$height(
-					$elm_community$typed_svg$TypedSvg$Types$Percent(90)),
-					$elm_community$typed_svg$TypedSvg$Attributes$stroke($elm_community$typed_svg$TypedSvg$Types$PaintNone),
-					$elm_community$typed_svg$TypedSvg$Attributes$fill(
-					$elm_community$typed_svg$TypedSvg$Types$Paint(
-						A2(
-							$elm$core$Maybe$withDefault,
-							$avh4$elm_color$Color$white,
-							A2($elm_community$list_extra$List$Extra$getAt, bgrC, $author$project$ParallelCoordinates$bgrc))))
+					$elm_community$typed_svg$TypedSvg$Types$Percent(100))
 				]),
-			_Utils_ap(
-				_List_fromArray(
-					[
-						A2(
-						$elm_community$typed_svg$TypedSvg$style,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm_community$typed_svg$TypedSvg$Core$text('\r\n                .xray {stroke: white; stroke-width:1; opacity:0.1; fill: none}\r\n                .xray text {display: none;}\r\n                .normal { stroke: black; fill:none; opacity: 0.5;stroke-width:0.5}\r\n                .normal:hover {stroke: rgba(4, 244, 251, 1); stroke-width: 2.5}\r\n                .normal text { display: none; }\r\n                .normal:hover text { display: inline; stroke: black; stroke-width: 0.1; font-size: small; font-family: calibri}  \r\n                ')
-							])),
-						A2(
-						$elm_community$typed_svg$TypedSvg$rect,
-						_List_fromArray(
-							[
-								$elm_community$typed_svg$TypedSvg$Attributes$InPx$x(0),
-								$elm_community$typed_svg$TypedSvg$Attributes$InPx$y(0),
-								$elm_community$typed_svg$TypedSvg$Attributes$InPx$width(w + (2 * $author$project$Data$padding)),
-								$elm_community$typed_svg$TypedSvg$Attributes$InPx$height(h + (2 * $author$project$Data$padding))
-							]),
-						_List_Nil),
-						A2(
-						$elm_community$typed_svg$TypedSvg$g,
-						_List_fromArray(
-							[
-								$elm_community$typed_svg$TypedSvg$Attributes$stroke(
-								$elm_community$typed_svg$TypedSvg$Types$Paint($avh4$elm_color$Color$black))
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm_community$typed_svg$TypedSvg$g,
-								_List_fromArray(
-									[
-										$elm_community$typed_svg$TypedSvg$Attributes$transform(
-										_List_fromArray(
-											[
-												A2($elm_community$typed_svg$TypedSvg$Types$Translate, $author$project$Data$padding - 1, $author$project$Data$padding)
-											]))
-									]),
-								A2(
-									$elm$core$List$indexedMap,
-									F2(
-										function (i, axis) {
-											return A2(
-												$elm_community$typed_svg$TypedSvg$g,
-												_List_fromArray(
-													[
-														$elm_community$typed_svg$TypedSvg$Attributes$transform(
-														_List_fromArray(
-															[
-																A2(
-																$elm_community$typed_svg$TypedSvg$Types$Translate,
-																A2($gampleman$elm_visualization$Scale$convert, xSkala, i + 1),
-																0)
-															]))
-													]),
-												_List_fromArray(
-													[axis]));
-										}),
-									listeAchse)),
-								A2(
-								$elm_community$typed_svg$TypedSvg$g,
-								_List_fromArray(
-									[
-										$elm_community$typed_svg$TypedSvg$Attributes$transform(
-										_List_fromArray(
-											[
-												A2($elm_community$typed_svg$TypedSvg$Types$Translate, $author$project$Data$padding - 1, 0)
-											]))
-									]),
-								A2(
-									$elm$core$List$indexedMap,
-									F2(
-										function (i, desc) {
-											return A2(
-												$elm_community$typed_svg$TypedSvg$text_,
-												_List_fromArray(
-													[
-														$elm_community$typed_svg$TypedSvg$Attributes$fontFamily(
-														_List_fromArray(
-															['calibri'])),
-														$elm_community$typed_svg$TypedSvg$Attributes$fontSize(
-														$elm_community$typed_svg$TypedSvg$Types$Px(12)),
-														$elm_community$typed_svg$TypedSvg$Attributes$InPx$x(
-														A2($gampleman$elm_visualization$Scale$convert, xSkala, i + 1)),
-														$elm_community$typed_svg$TypedSvg$Attributes$InPx$y(($author$project$Data$padding * 7) / 8),
-														$elm_community$typed_svg$TypedSvg$Attributes$textAnchor($elm_community$typed_svg$TypedSvg$Types$AnchorMiddle)
-													]),
-												_List_fromArray(
-													[
-														$elm_community$typed_svg$TypedSvg$Core$text(desc)
-													]));
-										}),
-									model.dimDescription))
-							]))
-					]),
-				function () {
-					var drawPoint = F3(
-						function (p, name, description) {
-							var linePath = A2(
-								$gampleman$elm_visualization$Shape$line,
-								$gampleman$elm_visualization$Shape$linearCurve,
-								A4(
-									$elm$core$List$map3,
-									F3(
-										function (desc, s, px) {
-											return $elm$core$Maybe$Just(
-												_Utils_Tuple2(
-													A2($gampleman$elm_visualization$Scale$convert, xSkala, desc),
-													A2($gampleman$elm_visualization$Scale$convert, s, px)));
-										}),
+			_List_fromArray(
+				[
+					A2(
+					$elm_community$typed_svg$TypedSvg$style,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm_community$typed_svg$TypedSvg$Core$text('\n            .point circle { stroke: black; fill: rgba(255, 255, 255, 0.5); }\n            .point text { display: none; }\n            .point:hover circle { stroke: black; fill: rgba(4, 244, 251, 1); }\n            .point:hover text { display: inline; font-size: x-small; }\n          ')
+						])),
+					A2(
+					$elm_community$typed_svg$TypedSvg$g,
+					_List_fromArray(
+						[
+							$elm_community$typed_svg$TypedSvg$Attributes$transform(
+							_List_fromArray(
+								[
+									A2($elm_community$typed_svg$TypedSvg$Types$Translate, 60, 390)
+								]))
+						]),
+					_List_fromArray(
+						[
+							$author$project$Scatterplot$xAxis(dataPoint.a),
+							A2(
+							$elm_community$typed_svg$TypedSvg$text_,
+							_List_fromArray(
+								[
+									$elm_community$typed_svg$TypedSvg$Attributes$InPx$x(
+									A2($gampleman$elm_visualization$Scale$convert, xScaleLocal, labelPositions.x)),
+									$elm_community$typed_svg$TypedSvg$Attributes$InPx$y(35),
+									$elm_community$typed_svg$TypedSvg$Attributes$fontSize(
+									$elm_community$typed_svg$TypedSvg$Types$px(15))
+								]),
+							_List_fromArray(
+								[
+									$elm_community$typed_svg$TypedSvg$Core$text(
 									A2(
-										$elm$core$List$range,
-										1,
-										$elm$core$List$length(model.dimDescription)),
-									listeSkala,
-									p));
-							return A2(
-								$elm_community$typed_svg$TypedSvg$g,
-								_List_fromArray(
-									[
-										(bgrC === 1) ? $elm_community$typed_svg$TypedSvg$Attributes$class(
-										_List_fromArray(
-											['normal'])) : $elm_community$typed_svg$TypedSvg$Attributes$class(
-										_List_fromArray(
-											['xray']))
-									]),
-								_List_fromArray(
-									[
-										A2($folkertdev$one_true_path_experiment$Path$element, linePath, _List_Nil),
+										$elm$core$Maybe$withDefault,
+										'',
 										A2(
-										$elm_community$typed_svg$TypedSvg$text_,
-										_List_fromArray(
-											[
-												$elm_community$typed_svg$TypedSvg$Attributes$InPx$x(300),
-												$elm_community$typed_svg$TypedSvg$Attributes$InPx$y(-50),
-												$elm_community$typed_svg$TypedSvg$Attributes$textAnchor($elm_community$typed_svg$TypedSvg$Types$AnchorMiddle),
-												$elm_community$typed_svg$TypedSvg$Attributes$fill(
-												$elm_community$typed_svg$TypedSvg$Types$Paint($avh4$elm_color$Color$black))
-											]),
-										_List_fromArray(
-											[
-												$elm_community$typed_svg$TypedSvg$Core$text(
-												_Utils_ap(
-													name,
-													$elm$core$String$concat(
-														A3(
-															$elm$core$List$map2,
-															F2(
-																function (a, b) {
-																	return ', ' + (b + (': ' + $elm$core$String$fromFloat(a)));
-																}),
-															p,
-															description))))
-											]))
-									]));
-						});
-					return A2(
+											$elm_community$list_extra$List$Extra$getAt,
+											0,
+											$author$project$Scatterplot$attToString(att))))
+								]))
+						])),
+					A2(
+					$elm_community$typed_svg$TypedSvg$g,
+					_List_fromArray(
+						[
+							$elm_community$typed_svg$TypedSvg$Attributes$transform(
+							_List_fromArray(
+								[
+									A2($elm_community$typed_svg$TypedSvg$Types$Translate, 60, 60)
+								]))
+						]),
+					_List_fromArray(
+						[
+							$author$project$Scatterplot$yAxis(dataPoint.b),
+							A2(
+							$elm_community$typed_svg$TypedSvg$text_,
+							_List_fromArray(
+								[
+									$elm_community$typed_svg$TypedSvg$Attributes$InPx$x(-30),
+									$elm_community$typed_svg$TypedSvg$Attributes$InPx$y(-30),
+									$elm_community$typed_svg$TypedSvg$Attributes$fontSize(
+									$elm_community$typed_svg$TypedSvg$Types$px(15))
+								]),
+							_List_fromArray(
+								[
+									$elm_community$typed_svg$TypedSvg$Core$text(
+									A2(
+										$elm$core$Maybe$withDefault,
+										'',
+										A2(
+											$elm_community$list_extra$List$Extra$getAt,
+											1,
+											$author$project$Scatterplot$attToString(att))))
+								]))
+						])),
+					A2(
+					$elm_community$typed_svg$TypedSvg$g,
+					_List_fromArray(
+						[
+							$elm_community$typed_svg$TypedSvg$Attributes$transform(
+							_List_fromArray(
+								[
+									A2($elm_community$typed_svg$TypedSvg$Types$Translate, $author$project$Data$padding, $author$project$Data$padding)
+								]))
+						]),
+					A2(
 						$elm$core$List$map,
-						function (dataset) {
-							return A2(
-								$elm_community$typed_svg$TypedSvg$g,
-								_List_fromArray(
-									[
-										$elm_community$typed_svg$TypedSvg$Attributes$transform(
-										_List_fromArray(
-											[
-												A2($elm_community$typed_svg$TypedSvg$Types$Translate, $author$project$Data$padding - 1, $author$project$Data$padding)
-											]))
-									]),
-								A2(
-									$elm$core$List$map,
-									function (a) {
-										return A3(drawPoint, a.value, a.pointName, model.dimDescription);
-									},
-									dataset));
-						},
-						model.data);
-				}()));
+						A3($author$project$Scatterplot$point, att, xScaleLocal, yScaleLocal),
+						model.data))
+				]));
 	});
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$ParallelCoordinates$view = function (model) {
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $author$project$Scatterplot$view = function (model) {
 	switch (model.$) {
 		case 'Error':
-			return $elm$html$Html$text('I cannot open your data.');
+			return $elm_community$typed_svg$TypedSvg$Core$text('I cannot open your data.');
 		case 'Loading':
-			return $elm$html$Html$text('Loading...');
+			return $elm_community$typed_svg$TypedSvg$Core$text('Loading ...');
 		default:
 			var l = model.a;
 			var numberTitles = $elm$core$List$length(l.data);
-			var multiDimDaten = function (listeTitle) {
-				return function (a) {
-					return function (b) {
-						return function (c) {
-							return function (d) {
-								return function (e) {
-									return function (f) {
-										return function (g) {
-											return function (h) {
-												return function (i) {
-													return A2(
-														$author$project$ParallelCoordinates$MultiDimData,
-														_List_fromArray(
-															[f, g, h, i]),
-														_List_fromArray(
-															[
-																A2(
-																$elm$core$List$map,
-																function (x) {
-																	return A2(
-																		$author$project$ParallelCoordinates$MultiDimPoint,
-																		e(x),
-																		_List_fromArray(
-																			[
-																				a(x),
-																				b(x),
-																				c(x),
-																				d(x)
-																			]));
-																},
-																listeTitle)
-															]));
-												};
-											};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-			var plotDaten = multiDimDaten(l.data)(l.firstFunction)(l.secondFunction)(l.thirdFunction)(l.fourthFunction)(
-				function ($) {
-					return $.title;
-				})(l.firstName)(l.secondName)(l.thirdName)(l.fourthName);
+			var filteredTitles = $author$project$Scatterplot$filterAndReduceTitles(l.data);
 			return A2(
 				$elm$html$Html$div,
 				_List_Nil,
@@ -9060,20 +8372,43 @@ var $author$project$ParallelCoordinates$view = function (model) {
 							[
 								$elm$html$Html$text('Back to homepage')
 							])),
+						A2($elm$html$Html$br, _List_Nil, _List_Nil),
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href('ParallelCoordinates.html')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Parallel Coordinates')
+							])),
+						A2($elm$html$Html$br, _List_Nil, _List_Nil),
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href('IconPlot.html')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Iconplot')
+							])),
+						A2($elm$html$Html$br, _List_Nil, _List_Nil),
 						A2(
 						$elm$html$Html$h1,
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('2. Parallel Coordinates')
+								$elm_community$typed_svg$TypedSvg$Core$text('1. Scatterplot')
 							])),
 						A2(
 						$elm$html$Html$p,
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Number of titles: '),
-								$elm$html$Html$text(
+								$elm_community$typed_svg$TypedSvg$Core$text('Number of titles: '),
+								$elm_community$typed_svg$TypedSvg$Core$text(
 								$elm$core$String$fromInt(numberTitles))
 							])),
 						A2(
@@ -9081,7 +8416,7 @@ var $author$project$ParallelCoordinates$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Please choose the database:')
+								$elm_community$typed_svg$TypedSvg$Core$text('Please choose the database:')
 							])),
 						A2(
 						$elm$html$Html$p,
@@ -9093,33 +8428,33 @@ var $author$project$ParallelCoordinates$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeDB($author$project$Data$All))
+										$author$project$Scatterplot$ChangeDB($author$project$Data$All))
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('All')
+										$elm_community$typed_svg$TypedSvg$Core$text('All')
 									])),
 								A2(
 								$elm$html$Html$button,
 								_List_fromArray(
 									[
 										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeDB($author$project$Data$Movies))
+										$author$project$Scatterplot$ChangeDB($author$project$Data$Movies))
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Movies')
+										$elm_community$typed_svg$TypedSvg$Core$text('Movies')
 									])),
 								A2(
 								$elm$html$Html$button,
 								_List_fromArray(
 									[
 										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeDB($author$project$Data$Series))
+										$author$project$Scatterplot$ChangeDB($author$project$Data$Series))
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Series')
+										$elm_community$typed_svg$TypedSvg$Core$text('Series')
 									]))
 							])),
 						A2(
@@ -9127,586 +8462,154 @@ var $author$project$ParallelCoordinates$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Please choose one of the following attributes for axis 1: '),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt1(
-											_Utils_Tuple2(
-												function ($) {
-													return $.runtime;
-												},
-												'Runtime')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Runtime')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt1(
-											_Utils_Tuple2(
-												function ($) {
-													return $.imdb_score;
-												},
-												'IMDb score')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('IMDb score')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt1(
-											_Utils_Tuple2(
-												function ($) {
-													return $.imdb_votes;
-												},
-												'IMDb votes')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('IMDb votes')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt1(
-											_Utils_Tuple2(
-												function ($) {
-													return $.tmdb_popularity;
-												},
-												'TMDb popularity')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('TMDb popularity')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt1(
-											_Utils_Tuple2(
-												function ($) {
-													return $.tmdb_score;
-												},
-												'TMDb score')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('TMDb score')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt1(
-											_Utils_Tuple2(
-												function ($) {
-													return $.seasons;
-												},
-												'Seasons')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Seasons')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt1(
-											_Utils_Tuple2(
-												function ($) {
-													return $.release_year;
-												},
-												'Release year')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Release year')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt1(
-											_Utils_Tuple2(
-												function ($) {
-													return $.numberTags;
-												},
-												'Number of tags')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Number of tags')
-									]))
+								$elm_community$typed_svg$TypedSvg$Core$text('Please choose the data type to visualize:')
 							])),
 						A2(
 						$elm$html$Html$p,
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Please choose one of the following attributes for axis 2: '),
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$select,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt2(
-											_Utils_Tuple2(
-												function ($) {
-													return $.runtime;
-												},
-												'Runtime')))
+										$elm$html$Html$Attributes$id('my-id'),
+										$elm$html$Html$Events$onInput($author$project$Scatterplot$DropDown)
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Runtime')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt2(
-											_Utils_Tuple2(
-												function ($) {
-													return $.imdb_score;
-												},
-												'IMDb score')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('IMDb score')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt2(
-											_Utils_Tuple2(
-												function ($) {
-													return $.imdb_votes;
-												},
-												'IMDb votes')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('IMDb votes')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt2(
-											_Utils_Tuple2(
-												function ($) {
-													return $.tmdb_popularity;
-												},
-												'TMDb popularity')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('TMDb popularity')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt2(
-											_Utils_Tuple2(
-												function ($) {
-													return $.tmdb_score;
-												},
-												'TMDb score')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('TMDb score')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt2(
-											_Utils_Tuple2(
-												function ($) {
-													return $.seasons;
-												},
-												'Seasons')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Seasons')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt2(
-											_Utils_Tuple2(
-												function ($) {
-													return $.release_year;
-												},
-												'Release year')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Release year')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt2(
-											_Utils_Tuple2(
-												function ($) {
-													return $.numberTags;
-												},
-												'Number of tags')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Number of tags')
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('a')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('IMDb votes and IMDb score')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('b')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('TMDb popularity and TMDb score')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('c')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Runtime and IMDb score')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('d')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Runtime and TMDb score')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('e')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Runtime and TMDb popularity')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('f')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Number of seasons and TMDb score')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('g')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Number of seasons and IMDb score')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('h')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Number of seasons and TMDb popularity')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('i')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Number of tags and TMDb popularity')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('j')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Number of tags and IMDb votes')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('k')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Release year and IMDb score')
+											])),
+										A2(
+										$elm$html$Html$option,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value('l')
+											]),
+										_List_fromArray(
+											[
+												$elm_community$typed_svg$TypedSvg$Core$text('Release year and TMDb score')
+											]))
 									]))
 							])),
-						A2(
-						$elm$html$Html$p,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Please choose one of the following attributes for axis 3: '),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt3(
-											_Utils_Tuple2(
-												function ($) {
-													return $.runtime;
-												},
-												'Runtime')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Runtime')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt3(
-											_Utils_Tuple2(
-												function ($) {
-													return $.imdb_score;
-												},
-												'IMDb score')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('IMDb score')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt3(
-											_Utils_Tuple2(
-												function ($) {
-													return $.imdb_votes;
-												},
-												'IMDb votes')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('IMDb votes')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt3(
-											_Utils_Tuple2(
-												function ($) {
-													return $.tmdb_popularity;
-												},
-												'TMDb popularity')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('TMDb popularity')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt3(
-											_Utils_Tuple2(
-												function ($) {
-													return $.tmdb_score;
-												},
-												'TMDb score')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('TMDb score')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt3(
-											_Utils_Tuple2(
-												function ($) {
-													return $.seasons;
-												},
-												'Seasons')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Seasons')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt3(
-											_Utils_Tuple2(
-												function ($) {
-													return $.release_year;
-												},
-												'Release year')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Release year')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt3(
-											_Utils_Tuple2(
-												function ($) {
-													return $.numberTags;
-												},
-												'Number of tags')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Number of tags')
-									]))
-							])),
-						A2(
-						$elm$html$Html$p,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Please choose one of the following attributes for axis 4: '),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt4(
-											_Utils_Tuple2(
-												function ($) {
-													return $.runtime;
-												},
-												'Runtime')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Runtime')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt4(
-											_Utils_Tuple2(
-												function ($) {
-													return $.imdb_score;
-												},
-												'IMDb score')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('IMDb score')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt4(
-											_Utils_Tuple2(
-												function ($) {
-													return $.imdb_votes;
-												},
-												'IMDb votes')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('IMDb votes')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt4(
-											_Utils_Tuple2(
-												function ($) {
-													return $.tmdb_popularity;
-												},
-												'TMDb popularity')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('TMDb popularity')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt4(
-											_Utils_Tuple2(
-												function ($) {
-													return $.tmdb_score;
-												},
-												'TMDb score')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('TMDb score')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt4(
-											_Utils_Tuple2(
-												function ($) {
-													return $.seasons;
-												},
-												'Seasons')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Seasons')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt4(
-											_Utils_Tuple2(
-												function ($) {
-													return $.release_year;
-												},
-												'Release year')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Release year')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeAtt4(
-											_Utils_Tuple2(
-												function ($) {
-													return $.numberTags;
-												},
-												'Number of tags')))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Number of tags')
-									]))
-							])),
-						A2(
-						$elm$html$Html$p,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Please choose the mode: '),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeMode($author$project$ParallelCoordinates$B))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('X-Ray')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$ParallelCoordinates$ChangeMode($author$project$ParallelCoordinates$W))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Normal')
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A4($author$project$ParallelCoordinates$parCoord, 600, 2, l.cl, plotDaten)
-							]))
+						A2($author$project$Scatterplot$scatterplot, filteredTitles, l.att)
 					]));
 	}
 };
-var $author$project$ParallelCoordinates$main = $elm$browser$Browser$element(
-	{init: $author$project$ParallelCoordinates$init, subscriptions: $author$project$ParallelCoordinates$subscriptions, update: $author$project$ParallelCoordinates$update, view: $author$project$ParallelCoordinates$view});
-_Platform_export({'ParallelCoordinates':{'init':$author$project$ParallelCoordinates$main(
+var $author$project$Scatterplot$main = $elm$browser$Browser$element(
+	{init: $author$project$Scatterplot$init, subscriptions: $author$project$Scatterplot$subscriptions, update: $author$project$Scatterplot$update, view: $author$project$Scatterplot$view});
+_Platform_export({'Scatterplot':{'init':$author$project$Scatterplot$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
 
-  var app = Elm.ParallelCoordinates.init({ node: document.getElementById("elm") });
+  var app = Elm.Scatterplot.init({ node: document.getElementById("elm") });
 }
 catch (e)
 {

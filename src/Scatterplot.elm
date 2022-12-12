@@ -17,8 +17,7 @@ import TypedSvg.Core exposing (Svg, text)
 import List.Extra
 import Html exposing (p)
 import Html exposing (h1)
-import Data exposing (DB(..), Title, padding, h, w, tickCount, titleListe)
-import Data exposing (wideExtent)
+import Data exposing (DB(..), Title, padding, h, w, tickCount, titleListe, radius, wideExtent )
 
 main : Program () Model Msg
 main =
@@ -59,6 +58,11 @@ view model =
             in
                 div []
                     [ a [ href "Main.elm" ] [ Html.text "Back to homepage" ] 
+                    , Html.br [][]
+                    , Html.a [ href "ParallelCoordinates.elm" ] [ Html.text "Parallel Coordinates" ]
+                    , Html.br [][]
+                    , Html.a [ href "IconPlot.elm" ] [ Html.text "Iconplot" ]
+                    , Html.br [][]
                     , h1 []
                     [ text "1. Scatterplot"
                     ]
@@ -87,8 +91,10 @@ view model =
                         , option [ value "f" ] [ text "Number of seasons and TMDb score" ] 
                         , option [ value "g" ] [ text "Number of seasons and IMDb score" ] 
                         , option [ value "h" ] [ text "Number of seasons and TMDb popularity" ]
-                        , option [ value "k" ] [ text "Number of tags and TMDb popularity" ]
-                        , option [ value "i" ] [ text "Number of tags and IMDb votes" ]    
+                        , option [ value "i" ] [ text "Number of tags and TMDb popularity" ]
+                        , option [ value "j" ] [ text "Number of tags and IMDb votes" ]
+                        , option [ value "k" ] [ text "Release year and IMDb score" ]
+                        , option [ value "l" ] [ text "Release year and TMDb score" ]    
                         ]
                     ]
                     , scatterplot filteredTitles l.att
@@ -175,16 +181,28 @@ update msg model =
                             (Success <| {data = m.data, att = TMSP}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
-                "k" ->
+                "i" ->
                     case model of
                         Success m ->
                             (Success <| {data = m.data, att = TMTP}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
-                "i" ->
+                "j" ->
                     case model of
                         Success m ->
                             (Success <| {data = m.data, att = IMTV}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+                "k" ->
+                    case model of
+                        Success m ->
+                            (Success <| {data = m.data, att = IMRY}, Cmd.none)
+                        _ ->
+                            ( model, Cmd.none )
+                "l" ->
+                    case model of
+                        Success m ->
+                            (Success <| {data = m.data, att = TMRY}, Cmd.none)
                         _ ->
                             ( model, Cmd.none )
                 _ ->
@@ -223,12 +241,11 @@ filterAndReduceTitles my_titles =
 
 pointLabel : String -> Float -> Float -> Float -> Float -> Float -> Float -> Float -> Float -> Point -- xmts
 pointLabel title imdb_score imdb_votes runtime tmdb_popularity tmdb_score seasons release_year numberTags = -- xmts
-    Point (title ++ " (" ++ String.fromFloat imdb_votes ++ ", " ++ String.fromFloat imdb_score
-        ++ String.fromFloat runtime ++ ", " ++ String.fromFloat tmdb_popularity ++ ", " 
-        ++ String.fromFloat tmdb_score ++ ", " ++ String.fromFloat seasons ++ ", "
-        ++ String.fromFloat release_year ++ ", " ++ String.fromFloat numberTags ++ ")") 
+    Point (title ++ " (IMDb Votes: " ++ String.fromFloat imdb_votes ++ ", IMDb score: " ++ String.fromFloat imdb_score
+        ++ ", runtime: "++ String.fromFloat runtime ++ ", TMDb popularity; " ++ String.fromFloat tmdb_popularity 
+        ++ ", TMDb score: " ++ String.fromFloat tmdb_score ++ ", " ++ String.fromFloat seasons ++ ", release year: "
+        ++ String.fromFloat release_year ++ ", number of tags: " ++ String.fromFloat numberTags ++ ")") 
         (imdb_votes) (imdb_score) (runtime) (tmdb_popularity) (tmdb_score) (seasons) (release_year) (numberTags) -- xmts
-
 andMap : Maybe a -> Maybe (a -> b) -> Maybe b
 andMap = Maybe.map2 (|>)
 
@@ -263,6 +280,8 @@ attToString att =
         TMSP -> ["Seasons","TMDb popularity"] -- imdb season vs pop
         TMTP -> ["Number of Tags","TMDb popularity"] -- tmdb tags vs pop
         IMTV -> ["Number of Tags","IMDb votes"] -- imdb tags vs vote
+        IMRY -> ["Release Year","IMDb score"] -- tmdb tags vs pop
+        TMRY -> ["Release Year","TMDb score"]
 
 type Att
     = IMVS -- imdb vote vs score
@@ -275,6 +294,8 @@ type Att
     | TMSP -- tmdb season vs pop
     | TMTP -- tmdb tags vs pop
     | IMTV  -- imdb tags vs vote
+    | IMRY
+    | TMRY
 
 
 scatterplot : XyData -> Att -> Svg msg
@@ -303,6 +324,9 @@ scatterplot model att =
         cValues : List Float
         cValues =
             List.map .c model.data -- c
+        dValues : List Float
+        dValues =
+            List.map .d model.data -- c
 
         eValues : List Float
         eValues =
@@ -320,7 +344,9 @@ scatterplot model att =
                 IMSS -> ( cValues, yValues ) -- imdb season vs score
                 TMSP -> ( cValues, aValues ) -- imdb season vs pop
                 TMTP -> ( eValues, aValues ) -- imdb season vs pop
-                IMTV -> ( eValues, xValues )
+                IMTV -> ( eValues, xValues ) -- imdb season vs imdb vote
+                IMRY -> ( dValues, yValues ) -- year vs imdb score
+                TMRY -> ( dValues, bValues ) -- year vs tmdb score
         xScaleLocal : ContinuousScale Float
         xScaleLocal =
             xScale <| Tuple.first(dataPoint)
@@ -347,14 +373,14 @@ scatterplot model att =
             .point circle { stroke: black; fill: rgba(255, 255, 255, 0.5); }
             .point text { display: none; }
             .point:hover circle { stroke: black; fill: rgba(4, 244, 251, 1); }
-            .point:hover text { display: inline; font-size: small; }
+            .point:hover text { display: inline; font-size: x-small; }
           """ ]
     -- plot x axis    
          , g[ transform [ Translate (60) (390)]]
             [
                 xAxis (Tuple.first(dataPoint))
                 , text_
-                [ x (Scale.convert xScaleLocal labelPositions.x)
+                [ x (Scale.convert xScaleLocal labelPositions.x )
                 , y 35
 
                 -- , fontFamily [ "Helvetica", "sans-serif" ]
@@ -401,6 +427,8 @@ point att scaleX scaleY xyPoint =
                 TMSP -> ( xyPoint.c, xyPoint.a ) -- imdb season vs pop
                 TMTP -> ( xyPoint.e, xyPoint.a ) -- imdb season vs pop
                 IMTV -> ( xyPoint.e, xyPoint.x )
+                IMRY -> ( xyPoint.d, xyPoint.y ) 
+                TMRY -> ( xyPoint.d, xyPoint.b )
     in
         g [ class ["point"] ]    
           [  
@@ -420,7 +448,7 @@ point att scaleX scaleY xyPoint =
                     -- Verschieben entlang der x/y-Achse
                 ]
                 -- Formatierung von class "point"
-                [ circle [ cx 0, cy 0, r 5 ] []
+                [ circle [ cx 0, cy 0, r radius ] []
                 --, text_ [ x 10, y -20, textAnchor AnchorMiddle ] [ Html.text xyPoint.pointName ]
                 ]
             ]
